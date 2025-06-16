@@ -1,0 +1,9 @@
+<div class="container mx-auto px-4 py-8 max-w-lg">
+  <h1 class="text-3xl font-bold mb-6 text-center">New Weekly Note</h1>
+
+  <%= render 'form', note: @note %>
+
+  <div class="mt-4 text-center">
+    <%= link_to 'Back to week view', app_reservation_week_path(date: @note.reservation_week.week_start), class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+</div> 

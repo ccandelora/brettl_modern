@@ -1,0 +1,175 @@
+<% content_for :title, "New User" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Create New User</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            Add a new user account to the system
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <%= link_to "← Back to Users", 
+              admin_users_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow-sm rounded-lg">
+      <%= form_with(model: [:admin, @user], local: true, class: "space-y-8 divide-y divide-gray-200") do |form| %>
+        <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+          <!-- Personal Information Section -->
+          <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+            <div class="px-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Personal Information</h3>
+              <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Basic account information for the new user.
+              </p>
+            </div>
+            <div class="space-y-6 sm:space-y-5 px-6">
+              <!-- Name Field -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :name, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Full Name
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.text_field :name, 
+                      class: "max-w-lg block w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md",
+                      placeholder: "Enter user's full name" %>
+                  <% if @user.errors[:name].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:name].first %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Email Field -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :email, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Email Address
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.email_field :email, 
+                      class: "max-w-lg block w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md",
+                      placeholder: "Enter user's email address" %>
+                  <% if @user.errors[:email].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:email].first %></p>
+                  <% end %>
+                  <p class="mt-2 text-sm text-gray-500">
+                    The user will receive a confirmation email at this address.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Role Field -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :role, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Account Type
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.select :role, 
+                      options_for_select([
+                        ['Member', ''],
+                        ['Administrator', 2]
+                      ], @user.role),
+                      {},
+                      class: "max-w-lg block focus:ring-red-500 focus:border-red-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md" %>
+                  <% if @user.errors[:role].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:role].first %></p>
+                  <% end %>
+                  <p class="mt-2 text-sm text-gray-500">
+                    Administrators have full access to manage users and system settings.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Password Section -->
+          <div class="pt-8 space-y-6 sm:pt-10 sm:space-y-5">
+            <div class="px-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Password</h3>
+              <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Set a temporary password for the new user.
+              </p>
+            </div>
+            <div class="space-y-6 sm:space-y-5 px-6">
+              <!-- Password -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :password, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Password
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.password_field :password, 
+                      class: "max-w-lg block w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md",
+                      placeholder: "Enter password (min. 6 characters)",
+                      autocomplete: "new-password" %>
+                  <% if @user.errors[:password].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:password].first %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Confirm Password -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :password_confirmation, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Confirm Password
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.password_field :password_confirmation, 
+                      class: "max-w-lg block w-full shadow-sm focus:ring-red-500 focus:border-red-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md",
+                      placeholder: "Confirm the password",
+                      autocomplete: "new-password" %>
+                  <% if @user.errors[:password_confirmation].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:password_confirmation].first %></p>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="pt-5">
+          <div class="flex justify-end px-6 pb-6">
+            <div class="flex space-x-3">
+              <%= link_to "Cancel", 
+                  admin_users_path, 
+                  class: "bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+              <%= form.submit "Create User", 
+                  class: "ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Help Text -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-md p-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-800">
+            User Creation Notes
+          </h3>
+          <div class="mt-2 text-sm text-blue-700">
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Admin-created users will automatically have their email confirmed</li>
+              <li>Users can change their password after first login</li>
+              <li>Account type determines system permissions</li>
+              <li>Users will receive access to the member reservation system</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

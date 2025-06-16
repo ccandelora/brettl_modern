@@ -1,0 +1,270 @@
+<% content_for :title, "AT Week - Appalachian Trail Experience" %>
+
+<!-- Hero Section -->
+<div class="relative isolate overflow-hidden bg-gradient-to-r from-green-900 via-emerald-900 to-teal-900 py-24 sm:py-32">
+  <div class="absolute inset-0 bg-black/40"></div>
+  <%= image_tag "hike.jpeg", class: "absolute inset-0 h-full w-full object-cover -z-10" %>
+  <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+        AT Week
+      </h1>
+      <p class="mt-6 text-lg leading-8 text-gray-100">
+        Experience the legendary Appalachian Trail with the Brettl-Hupfers Ski Club. 
+        Our lodge opens its doors to hikers during the summer months for an unforgettable mountain experience.
+      </p>
+      <div class="mt-10 flex items-center justify-center gap-x-6">
+        <%= link_to "#details", class: "rounded-md bg-white px-6 py-3 text-lg font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-all" do %>
+          Learn More
+        <% end %>
+        <%= link_to "#contact", class: "text-lg font-semibold leading-6 text-white hover:text-gray-200 transition-colors" do %>
+          Contact Us <span aria-hidden="true">→</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Program Overview -->
+<div id="details" class="py-24 sm:py-32 bg-white">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <h2 class="text-base font-semibold leading-7 text-green-600">Summer Program</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Brettl-Hupfers AT Week
+      </p>
+      <p class="mt-6 text-lg leading-8 text-gray-600 max-w-4xl mx-auto">
+        During the summer months when there's no skiing, we open our mountain lodge to Appalachian Trail hikers 
+        and outdoor enthusiasts. Experience the beauty of New Hampshire's mountains with the comfort and 
+        camaraderie of our ski club community.
+      </p>
+    </div>
+
+    <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+      <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+        <div class="flex flex-col">
+          <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+            <svg class="h-5 w-5 flex-none text-green-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M9.664 1.319a.75.75 0 01.672 0 41.059 41.059 0 018.198 5.424.75.75 0 01-.254 1.285 31.372 31.372 0 00-7.86 3.83.75.75 0 01-.84 0 31.508 31.508 0 00-2.08-1.287V9.394c0-.244.116-.463.302-.592a35.504 35.504 0 013.305-2.033.75.75 0 00-.714-1.319 37 37 0 00-3.446 2.12A2.216 2.216 0 006 9.393v.38a31.293 31.293 0 00-4.28-1.746.75.75 0 01-.254-1.285 41.059 41.059 0 018.198-5.424zM6 11.459a29.848 29.848 0 00-2.455-1.158 41.029 41.029 0 00-.39 3.114.75.75 0 00.419.74c.528.256 1.046.53 1.554.82-.21-.899-.498-1.83-.856-2.776-.226-.601-.441-1.216-.272-1.74z" clip-rule="evenodd" />
+            </svg>
+            Mountain Lodge Access
+          </dt>
+          <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+            <p class="flex-auto">
+              Stay in our comfortable mountain lodge with modern amenities, hot meals, and a warm bed after a long day on the trail.
+            </p>
+          </dd>
+        </div>
+        <div class="flex flex-col">
+          <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+            <svg class="h-5 w-5 flex-none text-green-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path d="M10 2L3 7v11a1 1 0 001 1h3v-7h6v7h3a1 1 0 001-1V7l-7-5z"/>
+            </svg>
+            Trail Community
+          </dt>
+          <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+            <p class="flex-auto">
+              Connect with fellow hikers and outdoor enthusiasts in a welcoming community atmosphere that extends beyond the trail.
+            </p>
+          </dd>
+        </div>
+        <div class="flex flex-col">
+          <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+            <svg class="h-5 w-5 flex-none text-green-600" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.876l-3.236 4.53L8.204 10.3a.75.75 0 00-1.408.591l1.5 3.5a.75.75 0 001.28.091l4.5-6.3z" clip-rule="evenodd" />
+            </svg>
+            Prime Location
+          </dt>
+          <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+            <p class="flex-auto">
+              Strategically located for easy access to some of New Hampshire's most beautiful hiking trails and AT sections.
+            </p>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<!-- What to Expect -->
+<div class="py-24 sm:py-32 bg-gray-50">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:mx-0">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What to Expect</h2>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        Our AT Week program provides hikers with a unique mountain experience that combines the adventure of the trail with the comfort of our lodge.
+      </p>
+    </div>
+    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:mt-10 lg:max-w-none lg:grid-cols-12">
+      <div class="relative lg:order-last lg:col-span-5">
+        <%= image_tag "summit_sign.jpg", class: "aspect-[3/2] w-full rounded-2xl bg-gray-50 object-cover lg:aspect-auto lg:h-[34.5rem]" %>
+      </div>
+      <div class="max-w-xl text-base leading-7 text-gray-700 lg:col-span-7">
+        <div class="space-y-8">
+          <div>
+            <h3 class="font-semibold text-gray-900 text-lg">Comfortable Accommodations</h3>
+            <p class="mt-2">
+              Rest and recharge in our mountain lodge with comfortable sleeping arrangements, hot showers, 
+              and common areas perfect for sharing trail stories with fellow adventurers.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-gray-900 text-lg">Hearty Meals</h3>
+            <p class="mt-2">
+              Fuel your adventures with satisfying meals prepared with hikers in mind. Start your day right 
+              and return to a warm dinner after exploring the trails.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-gray-900 text-lg">Trail Access & Information</h3>
+            <p class="mt-2">
+              Get insider knowledge about the best local trails, current conditions, and hidden gems from 
+              our members who know these mountains like the back of their hands.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold text-gray-900 text-lg">Community Experience</h3>
+            <p class="mt-2">
+              Join a community that appreciates the outdoors year-round. Whether you're skiing in winter or 
+              hiking in summer, you'll find kindred spirits who share your passion for mountain adventures.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Planning Your Visit -->
+<div class="py-24 sm:py-32 bg-white">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-4xl">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl text-center mb-16">Planning Your AT Week Visit</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <!-- Season & Timing -->
+        <div class="bg-green-50 rounded-2xl p-8">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5a2.25 2.25 0 002.25-2.25m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5a2.25 2.25 0 002.25 2.25v7.5" />
+              </svg>
+            </div>
+            <h3 class="ml-3 text-lg font-semibold text-gray-900">Season & Timing</h3>
+          </div>
+          <ul class="space-y-2 text-gray-700">
+            <li>• Summer months when trails are clear</li>
+            <li>• Peak hiking season availability</li>
+            <li>• Advanced reservations recommended</li>
+            <li>• Weather-dependent scheduling</li>
+          </ul>
+        </div>
+
+        <!-- What to Bring -->
+        <div class="bg-blue-50 rounded-2xl p-8">
+          <div class="flex items-center mb-4">
+            <div class="flex-shrink-0">
+              <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+              </svg>
+            </div>
+            <h3 class="ml-3 text-lg font-semibold text-gray-900">What to Bring</h3>
+          </div>
+          <ul class="space-y-2 text-gray-700">
+            <li>• Standard hiking gear and clothing</li>
+            <li>• Personal sleeping gear if required</li>
+            <li>• Trail snacks and water bottles</li>
+            <li>• Camera for mountain memories</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Important Notice -->
+      <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-8 mb-16">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-lg font-semibold text-yellow-800">Current Status & Reservations</h3>
+            <p class="mt-2 text-yellow-700">
+              AT Week programs are subject to seasonal availability and current conditions. 
+              Please contact us directly to confirm dates, availability, and make reservations for the upcoming season.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contact & Location -->
+<div id="contact" class="py-24 sm:py-32 bg-gray-900">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl">Ready for Your AT Week Adventure?</h2>
+      <p class="mt-6 text-lg leading-8 text-gray-300">
+        Contact us to learn more about availability, reservations, and what makes our AT Week program special.
+      </p>
+    </div>
+    
+    <div class="mx-auto mt-16 grid max-w-4xl grid-cols-1 gap-8 sm:grid-cols-2">
+      <!-- Contact Info -->
+      <div class="bg-gray-800 rounded-2xl p-8">
+        <h3 class="text-xl font-semibold text-white mb-6">Get In Touch</h3>
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <svg class="h-5 w-5 text-green-400 mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+            </svg>
+            <span class="text-gray-300">brettl.hupfers@gmail.com</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="h-5 w-5 text-green-400 mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+            </svg>
+            <span class="text-gray-300">(603) 374-9242</span>
+          </div>
+          <div class="flex items-center">
+            <svg class="h-5 w-5 text-green-400 mr-3" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            <span class="text-gray-300">1 George Street, Bartlett Village, NH</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Map/Location -->
+      <div class="bg-gray-800 rounded-2xl p-8">
+        <h3 class="text-xl font-semibold text-white mb-6">Find Our Lodge</h3>
+        <p class="text-gray-300 mb-4">
+          Located in the heart of New Hampshire's hiking country with easy access to the Appalachian Trail and surrounding peaks.
+        </p>
+        <a href="https://www.google.com/maps?q=1+George+Street,+Bartlett,+NH" target="_blank" class="inline-flex items-center text-green-400 hover:text-green-300 font-medium">
+          <svg class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+          </svg>
+          View on Google Maps
+        </a>
+      </div>
+    </div>
+    
+    <div class="mt-12 text-center">
+      <div class="inline-flex items-center justify-center space-x-6">
+        <%= link_to root_path, class: "text-white hover:text-green-400 transition-colors font-medium" do %>
+          ← Back to Home
+        <% end %>
+        <%= link_to "/membership", class: "bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors" do %>
+          Learn About Membership
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 

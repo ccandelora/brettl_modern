@@ -1,0 +1,229 @@
+<!-- Hero Section -->
+<div class="relative">
+  <div class="mx-auto max-w-7xl">
+    <div class="relative z-10 pt-14 lg:w-full lg:max-w-2xl">
+      <svg class="absolute inset-y-0 right-8 hidden h-full w-80 translate-x-1/2 transform fill-white lg:block" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <polygon points="0,0 90,0 50,100 0,100" />
+      </svg>
+
+      <div class="relative px-6 py-32 sm:py-40 lg:px-8 lg:py-56 lg:pr-0">
+        <div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl">
+          <div class="hidden sm:mb-10 sm:flex">
+            <div class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+              The <%= Date.current.year %> season is just around the corner. <%= link_to " Read more", membership_path, class:"whitespace-nowrap font-semibold text-indigo-600"%><span aria-hidden="true">→</span>
+            </div>
+          </div>
+          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">We Love The Outdoors!</h1>
+          <p class="mt-6 text-lg leading-8 text-gray-600">The Brettl-Hupfers Ski & Sports Club is a group of men and women united by friendship and a love for skiing, snowboarding, hiking, canoeing, and other outdoor sports year round.</p>
+          <div class="mt-10 flex items-center gap-x-6">
+            <a href="https://www.brettl.org/BHSC_Member_Application.pdf" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Join Us</a>
+            <%= link_to "Read more", membership_path,  class:"whitespace-nowrap font-semibold  text-gray-900"%><span aria-hidden="true">→</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bg-gray-50 lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+    <%= image_tag "tucks.jpg", class: "aspect-[3/2] object-cover lg:aspect-auto lg:h-full lg:w-full" %>
+  </div>
+</div>
+
+<!-- About Section -->
+<div class="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <svg class="absolute top-0 left-[max(50%,25rem)] h-[64rem] w-[128rem] -translate-x-1/2 [mask-image:radial-gradient(64rem_64rem_at_top,white,transparent)]" aria-hidden="true">
+      <defs>
+        <pattern id="e813992c-7d03-4cc4-a2bd-151760b470a0" width="200" height="200" x="50%" y="-1" patternUnits="userSpaceOnUse">
+          <path d="M100 200V.5M.5 .5H200" fill="none" />
+        </pattern>
+      </defs>
+      <svg x="50%" y="-1" class="overflow-visible fill-gray-50">
+        <path d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z" stroke-width="0" />
+      </svg>
+      <rect width="100%" height="100%" stroke-width="0" fill="url(#e813992c-7d03-4cc4-a2bd-151760b470a0)" />
+    </svg>
+  </div>
+  <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10">
+    <div class="lg:col-span-2 lg:col-start-1 lg:row-start-1 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+      <div class="lg:pr-4">
+        <div class="lg:max-w-lg">
+          <p class="text-base font-semibold leading-7 text-indigo-600">Your Year-Round Mountain Getaway</p>
+          <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">A Little Bit About The Club</h1>
+          <p class="mt-6 text-xl leading-8 text-gray-700">Here is a chance to find out a little bit about our club, who we are and how you can take advantage of an incredible opportunity to ski, ride or just enjoy outdoor activities in the White Mountains!</p>
+        </div>
+      </div>
+    </div>
+    <div class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
+      <%= image_tag "fronthouse.jpg", class: "w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]" %>
+    </div>
+    <div class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8">
+      <div class="lg:pr-4">
+        <div class="max-w-xl text-base leading-7 text-gray-700 lg:max-w-lg">
+          <p>We're a crazy group of eclectic individuals that love to ski and ride. We love everything the outdoors has to offer. The best way to get to know the Brettl-Hupfer's Ski and Sports Club is to come up for a weekend!</p>
+          <ul role="list" class="mt-8 space-y-8 text-gray-600">
+            <li class="flex gap-x-3">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-1 h-5 w-5 flex-none text-indigo-600">
+                <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.41-1.412A6.962 6.962 0 0 0 10 11.5a6.962 6.962 0 0 0-6.535 2.993Z" />
+              </svg>
+              <span><strong class="font-semibold text-gray-900">The People.</strong> A group of men and women united by friendship and a love for skiing, snowboarding, hiking, canoeing, and other outdoor sports year round.</span>
+            </li>
+            <li class="flex gap-x-3">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-1 h-5 w-5 flex-none text-indigo-600">
+                <path fill-rule="evenodd" d="m11.54 2.37-1.14 1.252a.75.75 0 0 1-1.06 0L8.2 2.37A4.503 4.503 0 0 0 2 6.649V14.5A1.5 1.5 0 0 0 3.5 16h13a1.5 1.5 0 0 0 1.5-1.5V6.649a4.503 4.503 0 0 0-6.2-4.28ZM9.25 4.955a.75.75 0 0 0-1.06-1.06l-2.5 2.5a.75.75 0 0 0 1.06 1.06L9.25 4.955Zm2.56-1.06a.75.75 0 1 0-1.06 1.06l2.5 2.5a.75.75 0 1 0 1.06-1.06l-2.5-2.5Z" clip-rule="evenodd" />
+              </svg>
+              <span><strong class="font-semibold text-gray-900">The House.</strong> Located in Bartlett Village, New Hampshire, the club is two miles (yes, two miles!) from Attitash/Bear Peak Ski Area and close to 10 other ski areas.</span>
+            </li>
+            <li class="flex gap-x-3">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="mt-1 h-5 w-5 flex-none text-indigo-600">
+                <path fill-rule="evenodd" d="M15.986 6.55a.75.75 0 0 0-.54-.22H4.554a.75.75 0 0 0-.54.22L2.6 9.025A2.25 2.25 0 0 0 2.25 10v.864a2.25 2.25 0 0 0 .45 1.265l1.865 2.5a.75.75 0 0 0 .54.22h10.892a.75.75 0 0 0 .54-.22l1.865-2.5a2.25 2.25 0 0 0 .45-1.265V10a2.25 2.25 0 0 0-.35-1.125l-1.414-2.325ZM4.647 8.5h10.706l.836 1.375a.75.75 0 0 1-.124.96l-1.5 1.667a.75.75 0 0 1-1.11.01L12.5 11.43v1.82a.75.75 0 0 1-1.5 0v-1.82l-.949 1.078a.75.75 0 0 1-1.102-.01l-1.5-1.667a.75.75 0 0 1-.124-.96L7.147 8.5h-2.5Z" clip-rule="evenodd" />
+              </svg>
+              <span><strong class="font-semibold text-gray-900">Let's Get Social!</strong> We offer a fun calendar of events that bring our members together with other ski and sports clubs and sponsor events in Boston and the North Conway area.</span>
+            </li>
+          </ul>
+          <h2 class="mt-16 text-2xl font-bold tracking-tight text-gray-900">What Are You Waiting For?</h2>
+          <p class="mt-6">The best way to get to know the Brettl-Hupfer's Ski and Sports Club is to come up for a weekend! Contact us to plan a weekend and learn more. We have Full, Associate, Race and other memberships available.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="bg-white py-16 sm:py-24">
+  <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+    <div class="relative overflow-hidden bg-gray-900 px-6 py-20 shadow-xl sm:rounded-3xl sm:px-10 sm:py-24 md:px-12 lg:px-20">
+      <%= image_tag "dropin.jpg", class: "absolute inset-0 size-full object-cover brightness-150 saturate-0" %>
+      <div class="absolute inset-0 bg-gray-900/90 mix-blend-multiply"></div>
+      <div class="absolute -top-56 -left-80 transform-gpu blur-3xl" aria-hidden="true">
+        <div class="aspect-1097/845 w-274.25 bg-linear-to-r from-[#ff4694] to-[#776fff] opacity-[0.45]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+      </div>
+      <div class="hidden md:absolute md:bottom-16 md:left-200 md:block md:transform-gpu md:blur-3xl" aria-hidden="true">
+        <div class="aspect-1097/845 w-274.25 bg-linear-to-r from-[#ff4694] to-[#776fff] opacity-25" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+      </div>
+      <div class="relative mx-auto max-w-2xl lg:mx-0" data-controller="testimonials">
+        <%= image_tag "brettllogo.png", class: "h-12 w-auto" %>
+        <figure>
+          <blockquote class="mt-6 text-lg font-semibold text-white sm:text-xl/8">
+            <div data-testimonials-target="quote" class="transition-opacity duration-500 ease-in-out">
+              <p>"Friendly club members go out of their way to chat with newcomers and make them feel comfortable."</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"They rock!"</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"Fun group of people who like to enjoy themselves on and off the slopes!"</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"Everyone was great. Met so many new people."</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"It's like being in an 80's ski movie."</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"People should join this group if you are a outdoor enthusiast, want to make new friends, have a good time, and save money while doing it. Wether you're budget conscious or not, you couldn't meet a friendlier group of people than up at the Brettl-Hupfers."</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"This is one of the best (and cheapest) ways to get out skiing and meet great people who enjoy the same."</p>
+            </div>
+            <div data-testimonials-target="quote" class="hidden transition-opacity duration-500 ease-in-out">
+              <p>"This a great group of people to ski or board with, and an inexpensive place to stay up in the mountains every weekend."</p>
+            </div>
+          </blockquote>
+          <figcaption class="mt-6 text-base text-white">
+            <div class="font-semibold">A Happy Member</div>
+            <div class="mt-1">Brettl-Hupfers Ski & Sports Club</div>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stay Connected Section with Facebook Feed -->
+<div class="bg-gray-100 py-16 sm:py-24">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-12">
+      Stay Connected
+    </h2>
+    <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+      <div class="flex justify-center">
+        <div class="w-full max-w-2xl">
+          <!-- Facebook Page Plugin -->
+          <div class="fb-page"
+              data-href="https://www.facebook.com/brettl.hupfers"
+              data-tabs="timeline"
+              data-width="500"
+              data-height="600"
+              data-small-header="false"
+              data-adapt-container-width="true"
+              data-hide-cover="false"
+              data-show-facepile="true"
+              data-lazy="false">
+            <blockquote cite="https://www.facebook.com/brettl.hupfers" class="fb-xfbml-parse-ignore">
+              <a href="https://www.facebook.com/brettl.hupfers" class="text-indigo-600 hover:text-indigo-800">
+                Brettl-Hupfers Ski &amp; Sports Club
+              </a>
+            </blockquote>
+          </div>
+          
+          <!-- Loading message -->
+          <div id="fb-loading" class="text-center py-8 text-gray-500">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-2"></div>
+            <p>Loading Facebook feed...</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Fallback content for when Facebook doesn't load -->
+      <div class="mt-6 text-center text-gray-600">
+        <p class="text-sm">
+          Follow us on social media for the latest updates, photos, and club news!
+        </p>
+        <div class="mt-4 flex justify-center space-x-4">
+          <a href="https://www.facebook.com/brettl.hupfers/" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            Visit our Facebook Page
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Optional: Add Instagram or other social feeds here -->
+    <div class="mt-8 text-center">
+      <p class="text-gray-600 text-sm">
+        Can't see the feed? Visit us directly at 
+        <a href="https://www.facebook.com/brettl.hupfers/" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="text-indigo-600 hover:text-indigo-800 font-medium">
+          facebook.com/brettl.hupfers
+        </a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Facebook debug script -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Hide loading message once Facebook widget loads
+    setTimeout(function() {
+      const fbWidget = document.querySelector('.fb-page');
+      const loadingDiv = document.getElementById('fb-loading');
+      
+      if (fbWidget && fbWidget.querySelector('iframe')) {
+        if (loadingDiv) loadingDiv.style.display = 'none';
+      } else {
+        console.log('Facebook widget did not load properly');
+        if (loadingDiv) {
+          loadingDiv.innerHTML = '<p class="text-gray-500 text-sm">Facebook feed unavailable. Please visit our page directly.</p>';
+        }
+      }
+    }, 3000);
+  });
+</script>

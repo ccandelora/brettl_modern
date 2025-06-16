@@ -1,0 +1,299 @@
+<% content_for :title, "Admin Dashboard" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+      <p class="mt-2 text-sm text-gray-600">
+        Welcome back, <%= current_user.name.present? ? current_user.name : current_user.email %>. Here's what's happening with your system.
+      </p>
+    </div>
+
+    <!-- Key Statistics -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+      <!-- Total Users -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+                <dd class="text-2xl font-semibold text-gray-900"><%= @total_users %></dd>
+                <dd class="text-xs text-gray-500 mt-1">
+                  <%= @admin_users %> admins, <%= @member_users %> members
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Reservations -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 8a4 4 0 11-8 0v-1a4 4 0 014-4h4a4 4 0 014 4v1a4 4 0 11-8 0z"></path>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Total Reservations</dt>
+                <dd class="text-2xl font-semibold text-gray-900"><%= @total_reservations %></dd>
+                <dd class="text-xs text-gray-500 mt-1">All time</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Week -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 8a4 4 0 11-8 0v-1a4 4 0 014-4h4a4 4 0 014 4v1a4 4 0 11-8 0z"></path>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Current Week</dt>
+                <dd class="text-2xl font-semibold text-gray-900"><%= @current_week_reservations %></dd>
+                <dd class="text-xs text-gray-500 mt-1">
+                  <%= @current_week_start.strftime("%b %d, %Y") %>
+                </dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unconfirmed Users -->
+      <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div class="p-5">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <svg class="h-6 w-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div class="ml-5 w-0 flex-1">
+              <dl>
+                <dt class="text-sm font-medium text-gray-500 truncate">Unconfirmed</dt>
+                <dd class="text-2xl font-semibold text-gray-900"><%= @unconfirmed_users %></dd>
+                <dd class="text-xs text-gray-500 mt-1">Need attention</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-8">
+      <h2 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <%= link_to admin_users_path, 
+            class: "p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center" do %>
+          <svg class="h-8 w-8 text-blue-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+          </svg>
+          <h3 class="text-sm font-medium text-gray-900">Manage Users</h3>
+          <p class="text-xs text-gray-500 mt-1">Create, edit, and delete users</p>
+        <% end %>
+
+        <%= link_to reservation_weeks_path, 
+            class: "p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center" do %>
+          <svg class="h-8 w-8 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 8a4 4 0 11-8 0v-1a4 4 0 014-4h4a4 4 0 014 4v1a4 4 0 11-8 0z"></path>
+          </svg>
+          <h3 class="text-sm font-medium text-gray-900">View All Weeks</h3>
+          <p class="text-xs text-gray-500 mt-1">Manage reservation weeks</p>
+        <% end %>
+
+        <%= link_to new_admin_user_path, 
+            class: "p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center" do %>
+          <svg class="h-8 w-8 text-purple-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+          <h3 class="text-sm font-medium text-gray-900">Create New User</h3>
+          <p class="text-xs text-gray-500 mt-1">Add a new user account</p>
+        <% end %>
+
+        <% if @current_week %>
+          <%= link_to app_reservation_week_path(@current_week), 
+              class: "p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center" do %>
+            <svg class="h-8 w-8 text-red-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 8a4 4 0 11-8 0v-1a4 4 0 014-4h4a4 4 0 014 4v1a4 4 0 11-8 0z"></path>
+            </svg>
+            <h3 class="text-sm font-medium text-gray-900">Current Week</h3>
+            <p class="text-xs text-gray-500 mt-1">View this week's reservations</p>
+          <% end %>
+        <% else %>
+          <div class="p-4 border border-gray-200 rounded-lg bg-gray-50 text-center opacity-50">
+            <svg class="h-8 w-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a4 4 0 118 0v4m-4 8a4 4 0 11-8 0v-1a4 4 0 014-4h4a4 4 0 014 4v1a4 4 0 11-8 0z"></path>
+            </svg>
+            <h3 class="text-sm font-medium text-gray-400">Current Week</h3>
+            <p class="text-xs text-gray-400 mt-1">No week configured</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Recent Activity and Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <!-- Weekly Reservation Trends -->
+      <div class="bg-white shadow-sm rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Weekly Reservation Trends</h2>
+        <div class="space-y-3">
+          <% @weekly_stats.each do |week| %>
+            <div class="flex items-center">
+              <div class="w-16 text-xs text-gray-500 flex-shrink-0">
+                <%= week[:week_name] %>
+              </div>
+              <div class="flex-1 ml-4">
+                <div class="bg-gray-200 rounded-full h-2">
+                  <% max_reservations = @weekly_stats.map { |w| w[:reservations] }.max %>
+                  <% width_percentage = max_reservations > 0 ? (week[:reservations].to_f / max_reservations * 100).round : 0 %>
+                  <div class="bg-blue-600 h-2 rounded-full" style="width: <%= width_percentage %>%"></div>
+                </div>
+              </div>
+              <div class="w-8 text-right text-sm font-medium text-gray-900">
+                <%= week[:reservations] %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- System Health -->
+      <div class="bg-white shadow-sm rounded-lg p-6">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">System Health</h2>
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Total Weeks Created</span>
+            <span class="text-sm font-medium text-gray-900"><%= @total_weeks %></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Weeks with Reservations</span>
+            <span class="text-sm font-medium text-gray-900"><%= @weeks_with_reservations %></span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-600">Utilization Rate</span>
+            <span class="text-sm font-medium text-gray-900">
+              <%= @total_weeks > 0 ? ((@weeks_with_reservations.to_f / @total_weeks) * 100).round : 0 %>%
+            </span>
+          </div>
+          <div class="pt-3 border-t border-gray-200">
+            <div class="flex items-center">
+              <div class="flex-shrink-0">
+                <% health_color = @unconfirmed_users == 0 ? "text-green-400" : "text-yellow-400" %>
+                <svg class="h-5 w-5 <%= health_color %>" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+              </div>
+              <span class="ml-2 text-sm text-gray-600">
+                <% if @unconfirmed_users == 0 %>
+                  All systems operational
+                <% else %>
+                  <%= @unconfirmed_users %> users need confirmation
+                <% end %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Recent Reservations -->
+      <div class="bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Recent Reservations</h2>
+          <p class="mt-1 text-sm text-gray-500">Last 30 days</p>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <% if @recent_reservations.any? %>
+            <% @recent_reservations.each do |reservation| %>
+              <div class="px-6 py-4 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-gray-900">
+                      <%= reservation.name %>
+                    </p>
+                    <p class="text-xs text-gray-500">
+                      <%= reservation.user.name || reservation.user.email %> • 
+                      Week of <%= reservation.reservation_week.res_date.strftime("%b %d, %Y") %>
+                    </p>
+                  </div>
+                  <div class="flex-shrink-0 text-xs text-gray-500">
+                    <%= time_ago_in_words(reservation.created_at) %> ago
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="px-6 py-8 text-center">
+              <p class="text-sm text-gray-500">No recent reservations</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Recent Users -->
+      <div class="bg-white shadow-sm rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+          <h2 class="text-lg font-medium text-gray-900">Recent Users</h2>
+          <p class="mt-1 text-sm text-gray-500">Last 30 days</p>
+        </div>
+        <div class="divide-y divide-gray-200">
+          <% if @recent_users.any? %>
+            <% @recent_users.each do |user| %>
+              <div class="px-6 py-4 hover:bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center flex-1">
+                    <div class="flex-shrink-0 h-8 w-8">
+                      <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                        <span class="text-xs font-medium text-gray-700">
+                          <%= user.name.present? ? user.name.first.upcase : user.email.first.upcase %>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="ml-3 flex-1">
+                      <p class="text-sm font-medium text-gray-900">
+                        <%= user.name.present? ? user.name : "No name" %>
+                      </p>
+                      <p class="text-xs text-gray-500">
+                        <%= user.email %>
+                        <% unless user.confirmed? %>
+                          <span class="text-yellow-600">• Unconfirmed</span>
+                        <% end %>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex-shrink-0 text-xs text-gray-500">
+                    <%= time_ago_in_words(user.created_at) %> ago
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="px-6 py-8 text-center">
+              <p class="text-sm text-gray-500">No recent users</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

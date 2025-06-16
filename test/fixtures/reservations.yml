@@ -1,0 +1,37 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  wed: false
+  thur: false
+  fri: false
+  sat: false
+  sun: false
+  mon: false
+  tue: false
+  dinner: false
+  comment: MyText
+  user: one
+  reservation_week: one
+  sex: MyString
+  res_member_type: MyString
+  reservation_date: 2025-06-16
+  confirmation_number: MyString
+
+two:
+  name: MyString
+  wed: false
+  thur: false
+  fri: false
+  sat: false
+  sun: false
+  mon: false
+  tue: false
+  dinner: false
+  comment: MyText
+  user: two
+  reservation_week: two
+  sex: MyString
+  res_member_type: MyString
+  reservation_date: 2025-06-16
+  confirmation_number: MyString

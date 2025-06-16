@@ -1,0 +1,66 @@
+<div id="<%= dom_id reservation %>" class="w-full sm:w-auto my-5 space-y-5">
+  <div>
+    <strong class="block font-medium mb-1">Name:</strong>
+    <%= reservation.name %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Wed:</strong>
+    <%= reservation.wed? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Thur:</strong>
+    <%= reservation.thur? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Fri:</strong>
+    <%= reservation.fri? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sat:</strong>
+    <%= reservation.sat? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sun:</strong>
+    <%= reservation.sun? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Mon:</strong>
+    <%= reservation.mon? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Tue:</strong>
+    <%= reservation.tue? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Dinner:</strong>
+    <%= reservation.dinner? ? "Yes" : "No" %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Comment:</strong>
+    <%= reservation.comment %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">User:</strong>
+    <%= reservation.user_id %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Reservation week:</strong>
+    <%= reservation.reservation_week_id %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Sex:</strong>
+    <%= reservation.sex %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Res member type:</strong>
+    <%= reservation.res_member_type %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Reservation date:</strong>
+    <%= reservation.reservation_date %>
+  </div>
+  <div>
+    <strong class="block font-medium mb-1">Confirmation number:</strong>
+    <%= reservation.confirmation_number %>
+  </div>
+</div>

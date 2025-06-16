@@ -1,0 +1,173 @@
+<header class="bg-white shadow" data-controller="mobile-menu">
+  <nav class="container mx-auto px-6 py-3">
+    <div class="flex items-center justify-between">
+      <!-- Logo and Brand -->
+      <div class="flex items-center">
+        <%= link_to root_path, class: "flex items-center" do %>
+          <%= image_tag "brettllogo.png", alt: "Brettl-Hupfers Ski Club", class: "h-16 w-16 mr-4" %>
+        <% end %>
+        <div class="hidden sm:block">
+          <span class="text-lg font-bold text-gray-900">Brettl-Hupfers Ski Club</span>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden lg:flex lg:items-center lg:space-x-8">
+        <!-- Main Navigation -->
+        <div class="flex items-center space-x-8">
+          <%= link_to "Home", root_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors" %>
+          
+          <!-- Info & Resources Dropdown -->
+          <div class="relative" data-controller="dropdown">
+            <button data-action="click->dropdown#toggle" class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
+              Info & Resources
+              <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div data-dropdown-target="menu" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+              <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Membership</div>
+              <%= link_to "Membership Info", membership_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+              <%= link_to "Payment Info", payment_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+              <hr class="my-1">
+              <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Activities</div>
+              <%= link_to "Guest FAQ", guest_faq_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+              <%= link_to "AT Week Info", at_week_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+              <%= link_to "Volleyball", volleyball_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+            </div>
+          </div>
+
+          <!-- Reservations (Only show when logged in) -->
+          <% if user_signed_in? %>
+            <div class="relative" data-controller="dropdown">
+              <button data-action="click->dropdown#toggle" class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
+                Reservations
+                <svg class="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              <div data-dropdown-target="menu" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <%= link_to "Current Week", app_reservation_week_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+                <%= link_to "All Weeks", reservation_weeks_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- User Account Area -->
+        <% if user_signed_in? %>
+          <div class="flex items-center space-x-4 border-l border-gray-200 pl-8">
+            <!-- User Profile Dropdown -->
+            <div class="relative" data-controller="dropdown">
+              <button data-action="click->dropdown#toggle" class="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
+                <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                  <span class="text-xs font-medium text-gray-600">
+                    <%= current_user.name.present? ? current_user.name.first.upcase : current_user.email.first.upcase %>
+                  </span>
+                </div>
+                <span class="hidden xl:block"><%= current_user.name.present? ? current_user.name.split.first : "Account" %></span>
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </button>
+              <div data-dropdown-target="menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <div class="px-4 py-2 border-b border-gray-100">
+                  <div class="text-sm font-medium text-gray-900">
+                    <%= current_user.name.present? ? current_user.name : "Account" %>
+                  </div>
+                  <div class="text-xs text-gray-500"><%= current_user.email %></div>
+                </div>
+                <%= link_to "My Profile", profile_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+                <% if current_user.admin? %>
+                  <hr class="my-1">
+                  <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Admin</div>
+                  <%= link_to "Admin Dashboard", admin_root_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+                  <%= link_to "Manage Users", admin_users_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+                <% end %>
+                <hr class="my-1">
+                <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 border-0 bg-transparent" %>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="border-l border-gray-200 pl-8">
+            <%= link_to "Sign In", new_user_session_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="lg:hidden">
+        <button data-action="click->mobile-menu#toggle" class="p-2 text-gray-700 hover:text-indigo-600 focus:outline-none focus:text-indigo-600">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path data-mobile-menu-target="openIcon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            <path data-mobile-menu-target="closeIcon" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div data-mobile-menu-target="menu" class="hidden lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
+      <div class="flex flex-col space-y-1">
+        <%= link_to "Home", root_path, class: "px-3 py-2 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+        
+        <!-- Info & Resources Section -->
+        <div class="px-3 py-2">
+          <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Info & Resources</div>
+          <div class="space-y-1 pl-3">
+            <%= link_to "Membership Info", membership_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+            <%= link_to "Payment Info", payment_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+            <%= link_to "Guest FAQ", guest_faq_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+            <%= link_to "AT Week Info", at_week_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+            <%= link_to "Volleyball", volleyball_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+          </div>
+        </div>
+        
+        <% if user_signed_in? %>
+          <!-- Reservations Section -->
+          <div class="px-3 py-2">
+            <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Reservations</div>
+            <div class="space-y-1 pl-3">
+              <%= link_to "Current Week", app_reservation_week_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+              <%= link_to "All Weeks", reservation_weeks_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+            </div>
+          </div>
+
+          <!-- Account Section -->
+          <div class="px-3 py-2 border-t border-gray-200 mt-4 pt-4">
+            <div class="flex items-center mb-3">
+              <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                <span class="text-sm font-medium text-gray-600">
+                  <%= current_user.name.present? ? current_user.name.first.upcase : current_user.email.first.upcase %>
+                </span>
+              </div>
+              <div>
+                <div class="text-sm font-medium text-gray-900">
+                  <%= current_user.name.present? ? current_user.name : "Account" %>
+                </div>
+                <div class="text-xs text-gray-500"><%= current_user.email %></div>
+              </div>
+            </div>
+            
+            <div class="space-y-1 pl-3">
+              <%= link_to "My Profile", profile_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+              
+              <% if current_user.admin? %>
+                <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-3 mb-2">Admin</div>
+                <%= link_to "Admin Dashboard", admin_root_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+                <%= link_to "Manage Users", admin_users_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+              <% end %>
+              
+              <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors border-0 bg-transparent mt-2" %>
+            </div>
+          </div>
+        <% else %>
+          <div class="px-3 py-2 border-t border-gray-200 mt-4 pt-4">
+            <%= link_to "Sign In", new_user_session_path, class: "w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+</header> 

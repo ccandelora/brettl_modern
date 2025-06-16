@@ -1,0 +1,68 @@
+<% content_for :title, "Editing reservation" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <% if notice.present? %>
+      <div class="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+        <%= notice %>
+      </div>
+    <% end %>
+
+    <!-- Breadcrumb Navigation -->
+    <nav class="mb-6" aria-label="Breadcrumb">
+      <ol class="flex items-center space-x-2 text-sm text-gray-500">
+        <li>
+          <%= link_to "All Weeks", reservation_weeks_path, class: "hover:text-gray-700 hover:underline" %>
+        </li>
+        <li>
+          <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </li>
+        <li>
+          <%= link_to "Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}", @reservation_week, class: "hover:text-gray-700 hover:underline" %>
+        </li>
+        <li>
+          <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+          </svg>
+        </li>
+        <li class="text-gray-900 font-medium">
+          Edit Reservation
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Editing reservation</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            <%= @reservation.name %> • Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %>
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <%= link_to "← Back to Week", 
+              @reservation_week, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <%= render "form", reservation: @reservation %>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <%= link_to "View Reservation Details", 
+          reservation_week_reservation_path(@reservation_week, @reservation), 
+          class: "inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+      <%= link_to "← Back to Week", 
+          @reservation_week, 
+          class: "inline-flex items-center justify-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+    </div>
+  </div>
+</div>

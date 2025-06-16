@@ -1,0 +1,132 @@
+<%= form_with(model: [@reservation_week, reservation], class: "max-w-2xl mx-auto") do |form| %>
+  <% if reservation.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+      <h3 class="font-medium text-red-800 mb-2"><%= pluralize(reservation.errors.count, "error") %> prohibited this reservation from being saved:</h3>
+      <ul class="list-disc list-inside text-sm">
+        <% reservation.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Hidden fields -->
+  <%= form.hidden_field :user_id, value: current_user.id %>
+  <%= form.hidden_field :reservation_week_id, value: @reservation_week.id %>
+  <%= form.hidden_field :reservation_date, value: Date.current %>
+
+  <!-- Date Section -->
+  <div class="bg-gray-50 p-4 rounded-lg mb-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-2">Date</h3>
+    <div class="text-sm text-gray-600">
+      Week of <%= @reservation_week.res_date.strftime("%B %d, %Y") %> 
+      (Wednesday to Tuesday)
+    </div>
+    <% if @reservation_week.res_date == Date.current.beginning_of_week(:wednesday) %>
+      <div class="mt-2 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+        <strong>Note:</strong> Reservations for the current week must be made before Wednesday midnight Eastern Time.
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Name Field -->
+  <div class="mb-6">
+    <%= form.label :name, "Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= form.text_field :name, 
+        value: reservation.name.present? ? reservation.name : current_user.email.split('@').first.titleize,
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" %>
+  </div>
+
+  <!-- Sex Selection -->
+  <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-700 mb-3">Sex</label>
+    <div class="flex space-x-6">
+      <label class="flex items-center">
+        <%= form.radio_button :sex, "Male", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Male</span>
+      </label>
+      <label class="flex items-center">
+        <%= form.radio_button :sex, "Female", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Female</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Member Type Selection -->
+  <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-700 mb-3">Member Type</label>
+    <div class="grid grid-cols-2 gap-4">
+      <label class="flex items-center">
+        <%= form.radio_button :res_member_type, "Full Member", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Full Member</span>
+      </label>
+      <label class="flex items-center">
+        <%= form.radio_button :res_member_type, "Associate Member", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Associate Member</span>
+      </label>
+      <label class="flex items-center">
+        <%= form.radio_button :res_member_type, "Race Member", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Race Member</span>
+      </label>
+      <label class="flex items-center">
+        <%= form.radio_button :res_member_type, "Guest", class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" %>
+        <span class="ml-2 text-sm text-gray-700">Guest</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Days Selection -->
+  <div class="mb-6">
+    <label class="block text-sm font-medium text-gray-700 mb-3">Select the days you are staying and if you DO NOT want the house dinner (if provided).</label>
+    <div class="grid grid-cols-2 gap-3">
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :wed, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Wednesday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :thur, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Thursday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :fri, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Friday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :sat, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Saturday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :sun, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Sunday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :mon, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Monday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50">
+        <%= form.check_box :tue, class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" %>
+        <span class="ml-2 text-sm text-gray-700">Tuesday</span>
+      </label>
+      <label class="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 bg-red-50 border-red-200">
+        <%= form.check_box :dinner, class: "h-4 w-4 text-red-600 focus:ring-red-500 border-red-300 rounded" %>
+        <span class="ml-2 text-sm text-red-700 font-medium">No Dinner</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Comment Field -->
+  <div class="mb-6">
+    <%= form.label :comment, "Comment", class: "block text-sm font-medium text-gray-700 mb-2" %>
+    <%= form.text_area :comment, rows: 4, 
+        class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+        placeholder: "Any additional comments or special requests..." %>
+  </div>
+
+  <!-- Submit Button -->
+  <div class="flex justify-end space-x-3">
+    <%= link_to "Back", @reservation_week ? reservation_week_path(@reservation_week) : reservation_weeks_path, 
+        class: "px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" %>
+    <%= form.submit "Submit", 
+        class: "px-6 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500" %>
+  </div>
+<% end %>
