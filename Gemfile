@@ -53,6 +53,9 @@ gem "image_processing", ">= 1.2"
 gem "pundit"
 gem "rack-cors"
 
+# SEO and sitemap generation
+gem "sitemap_generator"
+
 # Use SCSS for stylesheets
 # gem "sassc-rails"
 

@@ -1,1 +1,39 @@
-# See https://www.robotstxt.org/robotstxt.html for documentation on how to use the robots.txt file
+# robots.txt for Brettl-Hupfers Ski & Sports Club
+# See https://www.robotstxt.org/robotstxt.html for documentation
+
+User-agent: *
+Allow: /
+
+# Block admin and member-only areas
+Disallow: /admin/
+Disallow: /app/
+Disallow: /profile/
+Disallow: /users/
+Disallow: /reservation_weeks/
+Disallow: /reservations/
+Disallow: /notes/
+
+# Block authentication and session pages
+Disallow: /users/sign_in
+Disallow: /users/sign_up
+Disallow: /users/password
+Disallow: /users/confirmation
+Disallow: /users/unlock
+
+# Block any potential sensitive areas
+Disallow: /rails/
+Disallow: /assets/
+Disallow: /storage/
+Disallow: /tmp/
+Disallow: /log/
+
+# Allow important public assets
+Allow: /assets/images/
+Allow: /assets/stylesheets/
+Allow: /assets/javascripts/
+
+# Sitemap location
+Sitemap: https://brettl.org/sitemap.xml
+
+# Crawl delay (optional - be respectful to server)
+Crawl-delay: 1
