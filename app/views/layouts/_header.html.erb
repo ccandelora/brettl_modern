@@ -51,6 +51,9 @@
                 <%= link_to "All Weeks", reservation_weeks_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
               </div>
             </div>
+            
+            <!-- Renew Membership Link -->
+            <%= link_to "Renew Membership", 'https://docs.google.com/forms/d/e/1FAIpQLSes0Q-3dkORhUp-Y8GcvbgzOOuGkJyeRDraTWGc9mtOUQYr5Q/viewform?embedded=true&pli=1', class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors", target: "_blank" %>
           <% end %>
         </div>
 
@@ -131,6 +134,7 @@
             <div class="space-y-1 pl-3">
               <%= link_to "Current Week", app_reservation_week_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
               <%= link_to "All Weeks", reservation_weeks_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+              <%= link_to "Renew Membership", 'https://docs.google.com/forms/d/e/1FAIpQLSes0Q-3dkORhUp-Y8GcvbgzOOuGkJyeRDraTWGc9mtOUQYr5Q/viewform?embedded=true&pli=1', class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors", target: "_blank" %>
             </div>
           </div>
 
