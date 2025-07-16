@@ -6,7 +6,7 @@ A modern web application for the Brettl-Hupfers Ski & Sports Club, providing mem
 
 ## 🏔️ About
 
-The Brettl-Hupfers Ski & Sports Club is a group of men and women united by friendship and a love for skiing, snowboarding, hiking, canoeing, and other outdoor sports year round. Located in Bartlett Village, New Hampshire, the club is just two miles from Attitash/Bear Peak Ski Area and close to 10 other ski areas.
+The Brettl-Hupfers Ski & Sports Club is a group of people united by friendship and a love for skiing, snowboarding, hiking, canoeing, and other outdoor sports year round. Located in Bartlett Village, New Hampshire, the club is just two miles from Attitash/Bear Peak Ski Area and close to 10 other ski areas.
 
 ## ✨ Features
 
