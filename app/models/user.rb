@@ -6,6 +6,7 @@ class User < ApplicationRecord
 
   has_many :reservations, dependent: :destroy
   has_many :public_pins
+  has_many :owned_bunks, class_name: 'Bunk', foreign_key: 'owner_id', dependent: :nullify
 
   def admin?
     role == 2

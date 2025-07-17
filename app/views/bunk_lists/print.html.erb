@@ -1,0 +1,112 @@
+<% content_for :title, "Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
+
+<div class="header">
+  <h1>Brettl-Hupfers Ski Club</h1>
+  <h2>Bunk List - Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %></h2>
+  <% if @reservation_week.note.present? %>
+    <p><strong>Week Note:</strong> <%= @reservation_week.note %></p>
+  <% end %>
+</div>
+
+<div class="section-title">Women's Rooms</div>
+
+<% @women_rooms.each do |room| %>
+  <div class="room-title"><%= room.name %></div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th width="15%">Bunk</th>
+        <th width="35%">Owner</th>
+        <th width="35%">Occupant</th>
+        <th width="15%">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% room.bunks.ordered.each do |bunk| %>
+        <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+        <tr>
+          <td><%= bunk.name %></td>
+          <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+          <td>
+            <%= assignment ? assignment.reservation.name : "" %>
+          </td>
+          <td><%= bunk.bunk_type %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<div class="section-title">Men's Rooms</div>
+
+<% @men_rooms.each do |room| %>
+  <div class="room-title"><%= room.name %></div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th width="15%">Bunk</th>
+        <th width="35%">Owner</th>
+        <th width="35%">Occupant</th>
+        <th width="15%">Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% room.bunks.ordered.each do |bunk| %>
+        <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+        <tr>
+          <td><%= bunk.name %></td>
+          <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+          <td>
+            <%= assignment ? assignment.reservation.name : "" %>
+          </td>
+          <td><%= bunk.bunk_type %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<div class="summary">
+  <h3>Summary</h3>
+  <table style="width: 50%;">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Total</th>
+        <th>Occupied</th>
+        <th>Open</th>
+        <th>Owned</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Female Bunks</strong></td>
+        <td><%= @stats[:women][:total] %></td>
+        <td><%= @stats[:women][:occupied] %></td>
+        <td><%= @stats[:women][:open] %></td>
+        <td><%= @stats[:women][:owned] %></td>
+      </tr>
+      <tr>
+        <td><strong>Male Bunks</strong></td>
+        <td><%= @stats[:men][:total] %></td>
+        <td><%= @stats[:men][:occupied] %></td>
+        <td><%= @stats[:men][:open] %></td>
+        <td><%= @stats[:men][:owned] %></td>
+      </tr>
+      <tr style="border-top: 2px solid #333;">
+        <td><strong>Total Bunks</strong></td>
+        <td><%= @stats[:total][:total] %></td>
+        <td><%= @stats[:total][:occupied] %></td>
+        <td><%= @stats[:total][:total] - @stats[:total][:occupied] %></td>
+        <td><%= @stats[:women][:owned] + @stats[:men][:owned] %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <div style="margin-top: 20px;">
+    <p><strong>Generated:</strong> <%= Time.current.strftime('%B %d, %Y at %I:%M %p') %></p>
+    <p><strong>Total Reservations:</strong> <%= @reservation_week.reservations.count %></p>
+  </div>
+</div> 

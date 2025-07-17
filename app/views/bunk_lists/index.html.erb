@@ -1,0 +1,93 @@
+<% content_for :title, "Bunk Lists Management" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Bunk Lists Management</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            Generate and manage bunk assignments for each reservation week
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <%= link_to "← Back to Admin", admin_root_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weeks List -->
+    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-medium text-gray-900">Reservation Weeks</h2>
+      </div>
+
+      <% if @reservation_weeks.any? %>
+        <div class="divide-y divide-gray-200">
+          <% @reservation_weeks.each do |week| %>
+            <div class="p-6 hover:bg-gray-50">
+              <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex-1">
+                  <h3 class="text-lg font-medium text-gray-900">
+                    Week of <%= week.res_date.strftime('%B %d, %Y') %>
+                  </h3>
+                  <div class="mt-1 flex items-center space-x-4">
+                    <span class="text-sm text-gray-500">
+                      <%= pluralize(week.reservations.count, 'reservation') %>
+                    </span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= week.has_bunk_list? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
+                      <%= week.has_bunk_list? ? 'Generated' : 'Not Generated' %>
+                    </span>
+                  </div>
+                  <% if week.note.present? %>
+                    <p class="mt-2 text-sm text-gray-600">
+                      <span class="font-medium">Note:</span> <%= week.note %>
+                    </p>
+                  <% end %>
+                </div>
+                
+                <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2">
+                  <% if week.has_bunk_list? %>
+                    <%= link_to "View / Edit", bunk_list_path(week), 
+                        class: "inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+                    <%= link_to "Print", print_bunk_list_path(week), 
+                        class: "inline-flex items-center px-3 py-2 border border-indigo-300 rounded-md text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100",
+                        target: "_blank" %>
+                    <%= button_to "Delete List", bunk_list_path(week), 
+                        method: :delete,
+                        data: { turbo_confirm: "Are you sure you want to delete the bunk list for this week? This action cannot be undone." },
+                        class: "inline-flex items-center px-3 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100" %>
+                  <% else %>
+                    <% if week.reservations.any? %>
+                      <%= button_to "Generate List", generate_bunk_list_path(week), 
+                          method: :post,
+                          class: "inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700" %>
+                    <% else %>
+                      <span class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md text-sm font-medium text-gray-500 cursor-not-allowed">
+                        No Reservations
+                      </span>
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="p-6 text-center">
+          <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">No reservation weeks found</h3>
+          <p class="mt-1 text-sm text-gray-500">Create some reservation weeks to generate bunk lists.</p>
+          <div class="mt-6">
+            <%= link_to "Manage Reservation Weeks", reservation_weeks_path, 
+                class: "inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> 

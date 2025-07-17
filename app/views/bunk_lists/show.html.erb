@@ -1,0 +1,225 @@
+<% content_for :title, "Bunk List - Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">
+            Bunk List - Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %>
+          </h1>
+          <p class="mt-1 text-sm text-gray-600">
+            <%= pluralize(@reservation_week.reservations.count, 'reservation') %> • 
+            <%= pluralize(@bunk_assignments.count, 'assignment') %>
+          </p>
+          <% if @reservation_week.note.present? %>
+            <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p class="text-sm text-yellow-800">
+                <span class="font-medium">Week Note:</span> <%= @reservation_week.note %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2">
+          <%= link_to "← Back to Bunk Lists", bunk_lists_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+          <%= link_to "Print", print_bunk_list_path(@reservation_week), 
+              class: "inline-flex items-center px-4 py-2 border border-indigo-300 rounded-md text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100",
+              target: "_blank" %>
+          <%= button_to "Finalize & Email", finalize_and_email_bunk_list_path(@reservation_week), 
+              method: :post,
+              data: { turbo_confirm: "Are you sure you want to finalize this bunk list and send it to all members?" },
+              class: "inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Bunk List Display -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Women's Rooms -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 bg-pink-50 border-b border-pink-200">
+            <h2 class="text-lg font-semibold text-pink-800">WOMEN'S ROOMS</h2>
+          </div>
+          
+          <% @women_rooms.each do |room| %>
+            <div class="border-b border-gray-200 last:border-b-0">
+              <div class="px-6 py-3 bg-gray-50">
+                <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+              </div>
+              
+              <div class="p-6">
+                <div class="overflow-x-auto">
+                  <table class="min-w-full">
+                    <thead>
+                      <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="py-2">Bunk</th>
+                        <th class="py-2">Owner</th>
+                        <th class="py-2">Occupant</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      <% room.bunks.ordered.each do |bunk| %>
+                        <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+                        <tr>
+                          <td class="py-2 font-medium text-gray-900"><%= bunk.name %></td>
+                          <td class="py-2 text-gray-600">
+                            <%= bunk.owner ? bunk.owner.display_name : "Open" %>
+                          </td>
+                          <td class="py-2">
+                            <% if assignment %>
+                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <%= assignment.reservation.name %>
+                              </span>
+                            <% else %>
+                              <span class="text-gray-400 text-sm">Empty</span>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Men's Rooms -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 bg-blue-50 border-b border-blue-200">
+            <h2 class="text-lg font-semibold text-blue-800">MEN'S ROOMS</h2>
+          </div>
+          
+          <% @men_rooms.each do |room| %>
+            <div class="border-b border-gray-200 last:border-b-0">
+              <div class="px-6 py-3 bg-gray-50">
+                <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+              </div>
+              
+              <div class="p-6">
+                <div class="overflow-x-auto">
+                  <table class="min-w-full">
+                    <thead>
+                      <tr class="text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th class="py-2">Bunk</th>
+                        <th class="py-2">Owner</th>
+                        <th class="py-2">Occupant</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                      <% room.bunks.ordered.each do |bunk| %>
+                        <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+                        <tr>
+                          <td class="py-2 font-medium text-gray-900"><%= bunk.name %></td>
+                          <td class="py-2 text-gray-600">
+                            <%= bunk.owner ? bunk.owner.display_name : "Open" %>
+                          </td>
+                          <td class="py-2">
+                            <% if assignment %>
+                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                <%= assignment.reservation.name %>
+                              </span>
+                            <% else %>
+                              <span class="text-gray-400 text-sm">Empty</span>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Sidebar: Unassigned Members and Actions -->
+      <div class="space-y-6">
+        <!-- Unassigned Members -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Unassigned Members</h3>
+          </div>
+          
+          <% if @unassigned_reservations.any? %>
+            <div class="p-6 space-y-3">
+              <% @unassigned_reservations.each do |reservation| %>
+                <div class="p-3 border border-red-200 rounded-md bg-red-50">
+                  <div class="font-medium text-red-900"><%= reservation.name %></div>
+                  <div class="text-sm text-red-700">
+                    <%= reservation.sex %> • <%= reservation.res_member_type %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% else %>
+            <div class="p-6 text-center">
+              <svg class="mx-auto h-8 w-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+              <p class="mt-2 text-sm text-green-600">All members assigned!</p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+          </div>
+          
+          <div class="p-6 space-y-3">
+            <%= button_to "Regenerate Assignments", generate_bunk_list_path(@reservation_week), 
+                method: :post,
+                data: { turbo_confirm: "This will clear all current assignments and regenerate them automatically. Continue?" },
+                class: "w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700" %>
+            
+            <%= button_to "Clear All Assignments", bunk_list_path(@reservation_week), 
+                method: :delete,
+                data: { turbo_confirm: "This will remove all bunk assignments for this week. Continue?" },
+                class: "w-full inline-flex justify-center items-center px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100" %>
+          </div>
+        </div>
+
+        <!-- Summary Statistics -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Summary</h3>
+          </div>
+          
+          <div class="p-6 space-y-4">
+            <div>
+              <h4 class="text-sm font-medium text-gray-700">Women's Bunks</h4>
+              <div class="mt-1 text-sm text-gray-600">
+                <% women_bunks = Bunk.joins(:room).where(rooms: { gender: 'women' }) %>
+                <% women_assigned = @bunk_assignments.select { |ba| ba.bunk.room.gender == 'women' }.count %>
+                <%= women_assigned %>/<%= women_bunks.count %> occupied
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="text-sm font-medium text-gray-700">Men's Bunks</h4>
+              <div class="mt-1 text-sm text-gray-600">
+                <% men_bunks = Bunk.joins(:room).where(rooms: { gender: 'men' }) %>
+                <% men_assigned = @bunk_assignments.select { |ba| ba.bunk.room.gender == 'men' }.count %>
+                <%= men_assigned %>/<%= men_bunks.count %> occupied
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="text-sm font-medium text-gray-700">Total</h4>
+              <div class="mt-1 text-sm text-gray-600">
+                <%= @bunk_assignments.count %>/<%= Bunk.count %> bunks occupied
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

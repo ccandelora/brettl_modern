@@ -18,6 +18,15 @@ Rails.application.routes.draw do
     resources :users
   end
 
+  # Bunk Lists - Admin only
+  resources :bunk_lists, only: [:index, :show, :edit, :update, :destroy] do
+    member do
+      post :generate
+      get :print
+      post :finalize_and_email
+    end
+  end
+
   # Profile routes - only show and edit, users can only edit their own profile
   resource :profile, only: [ :show, :edit, :update ]
 
