@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_17_004201) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_17_024209) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -55,12 +55,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_17_004201) do
 
   create_table "bunk_assignments", force: :cascade do |t|
     t.bigint "reservation_week_id", null: false
-    t.bigint "reservation_id", null: false
     t.bigint "bunk_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "assignable_type", null: false
+    t.bigint "assignable_id", null: false
+    t.index ["assignable_type", "assignable_id"], name: "index_bunk_assignments_on_assignable"
     t.index ["bunk_id"], name: "index_bunk_assignments_on_bunk_id"
-    t.index ["reservation_id"], name: "index_bunk_assignments_on_reservation_id"
     t.index ["reservation_week_id", "bunk_id"], name: "index_bunk_assignments_on_reservation_week_id_and_bunk_id", unique: true
     t.index ["reservation_week_id"], name: "index_bunk_assignments_on_reservation_week_id"
   end
@@ -88,6 +89,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_17_004201) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["type"], name: "index_ckeditor_assets_on_type"
+  end
+
+  create_table "guests", force: :cascade do |t|
+    t.string "name"
+    t.string "sex"
+    t.string "guest_type"
+    t.string "phone"
+    t.string "email"
+    t.bigint "reservation_week_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reservation_week_id"], name: "index_guests_on_reservation_week_id"
   end
 
   create_table "notes", id: :serial, force: :cascade do |t|
@@ -181,7 +194,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_17_004201) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bunk_assignments", "bunks"
   add_foreign_key "bunk_assignments", "reservation_weeks"
-  add_foreign_key "bunk_assignments", "reservations"
   add_foreign_key "bunks", "rooms"
   add_foreign_key "bunks", "users", column: "owner_id"
+  add_foreign_key "guests", "reservation_weeks"
 end

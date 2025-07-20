@@ -35,7 +35,7 @@ puts "Creating default admin user..."
 User.find_or_create_by(email: 'admin@brettl.org') do |user|
   user.password = 'change_me_now!'
   user.password_confirmation = 'change_me_now!'
-  user.role = 2  # Admin role
+  user.role = 2  # Admin role as integer
   user.name = 'Admin User'
   user.confirmed_at = Time.current
 end

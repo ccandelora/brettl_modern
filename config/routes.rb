@@ -16,6 +16,18 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :users
+
+    # Master Bunk List Management
+    resources :master_bunk_list, only: [:index] do
+      collection do
+        post :import_from_html
+        patch :bulk_update
+      end
+      member do
+        get :edit_bunk
+        patch :update_bunk
+      end
+    end
   end
 
   # Bunk Lists - Admin only
@@ -24,6 +36,7 @@ Rails.application.routes.draw do
       post :generate
       get :print
       post :finalize_and_email
+      post :add_guest
     end
   end
 

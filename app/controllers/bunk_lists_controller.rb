@@ -1,7 +1,8 @@
 class BunkListsController < ApplicationController
   before_action :authenticate_user!
   before_action :ensure_admin!
-  before_action :set_reservation_week, only: [:show, :edit, :update, :destroy, :generate, :print, :finalize_and_email]
+  before_action :set_reservation_week, only: [:show, :edit, :update, :destroy, :generate, :print, :finalize_and_email, :add_guest]
+  skip_before_action :verify_authenticity_token, only: [:add_guest] if Rails.env.development?
 
   def index
     @reservation_weeks = ReservationWeek.includes(:bunk_assignments, :reservations)
@@ -13,14 +14,19 @@ class BunkListsController < ApplicationController
     @rooms = Room.includes(:bunks).ordered
     @women_rooms = @rooms.women
     @men_rooms = @rooms.men
-    @bunk_assignments = @reservation_week.bunk_assignments.includes(:reservation, :bunk)
-    @unassigned_reservations = unassigned_reservations_for_week
+    @coed_rooms = @rooms.coed
+    @bunk_assignments = @reservation_week.bunk_assignments.includes(:assignable, :bunk)
+    @unassigned_assignables = unassigned_assignables_for_week
   end
 
   def edit
-    # Same as show - the edit interface is the same as the view interface
-    show
-    render :show
+    @rooms = Room.includes(:bunks).ordered
+    @women_rooms = @rooms.women
+    @men_rooms = @rooms.men
+    @coed_rooms = @rooms.coed
+    @bunk_assignments = @reservation_week.bunk_assignments.includes(:assignable, :bunk)
+    @unassigned_assignables = unassigned_assignables_for_week
+    @new_guest = @reservation_week.guests.build
   end
 
   def generate
@@ -33,14 +39,37 @@ class BunkListsController < ApplicationController
   end
 
   def update
-    # Handle manual assignment updates via AJAX
-    assignment_params = params[:bunk_assignments] || {}
-
     begin
-      BunkAssignmentService.new(@reservation_week).update_assignments(assignment_params)
-      redirect_to bunk_list_path(@reservation_week), notice: 'Bunk assignments updated successfully!'
+      if params[:auto_assign]
+        # Auto-assign unassigned reservations
+        service = BunkAssignmentService.new(@reservation_week)
+        service.assign_unassigned_only
+        redirect_to bunk_list_path(@reservation_week), notice: 'Unassigned members have been automatically assigned!'
+      else
+        # Handle manual assignment updates
+        assignment_params = params[:assignments] || {}
+        update_manual_assignments(assignment_params)
+        redirect_to bunk_list_path(@reservation_week), notice: 'Bunk assignments updated successfully!'
+      end
     rescue StandardError => e
-      redirect_to bunk_list_path(@reservation_week), alert: "Error updating assignments: #{e.message}"
+      redirect_to edit_bunk_list_path(@reservation_week), alert: "Error updating assignments: #{e.message}"
+    end
+  end
+
+  def add_guest
+    @guest = @reservation_week.guests.build(guest_params)
+
+    if @guest.save
+      redirect_to edit_bunk_list_path(@reservation_week), notice: 'Guest added successfully!'
+    else
+      @rooms = Room.includes(:bunks).ordered
+      @women_rooms = @rooms.women
+      @men_rooms = @rooms.men
+      @coed_rooms = @rooms.coed
+      @bunk_assignments = @reservation_week.bunk_assignments.includes(:assignable, :bunk)
+      @unassigned_assignables = unassigned_assignables_for_week
+      @new_guest = @guest
+      render :edit, alert: 'Error adding guest.'
     end
   end
 
@@ -53,7 +82,8 @@ class BunkListsController < ApplicationController
     @rooms = Room.includes(:bunks).ordered
     @women_rooms = @rooms.women
     @men_rooms = @rooms.men
-    @bunk_assignments = @reservation_week.bunk_assignments.includes(:reservation, :bunk)
+    @coed_rooms = @rooms.coed
+    @bunk_assignments = @reservation_week.bunk_assignments.includes(:assignable, :bunk)
 
     # Calculate summary statistics
     @stats = calculate_bunk_statistics
@@ -77,9 +107,65 @@ class BunkListsController < ApplicationController
     redirect_to root_path, alert: 'Access denied. Admin privileges required.' unless current_user.admin?
   end
 
-  def unassigned_reservations_for_week
-    assigned_reservation_ids = @reservation_week.bunk_assignments.pluck(:reservation_id)
-    @reservation_week.reservations.where.not(id: assigned_reservation_ids)
+  def unassigned_assignables_for_week
+    @reservation_week.unassigned_assignables
+  end
+
+  def update_manual_assignments(assignment_params)
+    # Clear all existing assignments for this week
+    @reservation_week.bunk_assignments.destroy_all
+
+    # Create new assignments based on the form data
+    assignment_params.each do |bunk_id, assignable_data|
+      next if assignable_data.blank?
+
+      # Parse the assignable data (format: "type:id")
+      assignable_type, assignable_id = assignable_data.split(':')
+      next if assignable_type.blank? || assignable_id.blank?
+
+      bunk = Bunk.find(bunk_id)
+
+      # Find the assignable object
+      assignable = case assignable_type
+                   when 'Reservation'
+                     @reservation_week.reservations.find(assignable_id)
+                   when 'Guest'
+                     @reservation_week.guests.find(assignable_id)
+                   else
+                     next
+                   end
+
+      # Validate gender compatibility
+      unless gender_compatible?(assignable, bunk)
+        raise "Gender mismatch: Cannot assign #{assignable.sex} to #{bunk.room.gender}'s room"
+      end
+
+      BunkAssignment.create!(
+        reservation_week: @reservation_week,
+        assignable: assignable,
+        bunk: bunk
+      )
+    end
+  end
+
+  def gender_compatible?(assignable, bunk)
+    room_gender = bunk.room.gender
+    assignable_gender = assignable.sex&.downcase
+
+    case room_gender
+    when 'men'
+      assignable_gender == 'male'
+    when 'women'
+      assignable_gender == 'female'
+    when 'coed'
+      %w[male female].include?(assignable_gender)
+    else
+      false
+    end
+  end
+
+  def guest_params
+    params.require(:guest).permit(:name, :sex, :guest_type, :phone, :email)
   end
 
   def calculate_bunk_statistics
@@ -96,14 +182,20 @@ class BunkListsController < ApplicationController
         total: all_bunks.joins(:room).where(rooms: { gender: 'men' }).count,
         occupied: assigned_bunks.select { |b| b.room.gender == 'men' }.count,
         owned: all_bunks.joins(:room).where(rooms: { gender: 'men' }).where.not(owner: nil).count
+      },
+      coed: {
+        total: all_bunks.joins(:room).where(rooms: { gender: 'coed' }).count,
+        occupied: assigned_bunks.select { |b| b.room.gender == 'coed' }.count,
+        owned: all_bunks.joins(:room).where(rooms: { gender: 'coed' }).where.not(owner: nil).count
       }
     }
 
     stats[:women][:open] = stats[:women][:total] - stats[:women][:occupied]
     stats[:men][:open] = stats[:men][:total] - stats[:men][:occupied]
+    stats[:coed][:open] = stats[:coed][:total] - stats[:coed][:occupied]
     stats[:total] = {
-      total: stats[:women][:total] + stats[:men][:total],
-      occupied: stats[:women][:occupied] + stats[:men][:occupied]
+      total: stats[:women][:total] + stats[:men][:total] + stats[:coed][:total],
+      occupied: stats[:women][:occupied] + stats[:men][:occupied] + stats[:coed][:occupied]
     }
 
     stats

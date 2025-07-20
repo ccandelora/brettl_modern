@@ -1,0 +1,140 @@
+<% content_for :title, "Master Bunk List Management" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Master Bunk List</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            Manage room and bunk ownership for the clubhouse
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2">
+          <%= button_to "Update from HTML", import_from_html_admin_master_bunk_list_index_path, 
+              method: :post,
+              data: { turbo_confirm: "This will overwrite all current data. Are you sure?" },
+              class: "inline-flex items-center px-4 py-2 border border-orange-300 rounded-md text-sm font-medium text-orange-700 bg-orange-50 hover:bg-orange-100" %>
+          <%= link_to "← Back to Admin", admin_root_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Summary -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Summary</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-gray-900"><%= @stats[:total_rooms] %></div>
+          <div class="text-sm text-gray-600">Total Rooms</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-gray-900"><%= @stats[:total_bunks] %></div>
+          <div class="text-sm text-gray-600">Total Bunks</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-green-600"><%= @stats[:women][:owned] + @stats[:men][:owned] %></div>
+          <div class="text-sm text-gray-600">Owned Bunks</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-600"><%= @stats[:women][:open] + @stats[:men][:open] %></div>
+          <div class="text-sm text-gray-600">Open Bunks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Edit Form -->
+    <%= form_with url: bulk_update_admin_master_bunk_list_index_path, method: :patch, local: true do |form| %>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Women's Rooms -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 bg-pink-50 border-b border-pink-200">
+            <h2 class="text-lg font-semibold text-pink-800">
+              WOMEN'S ROOMS
+              <span class="text-sm font-normal text-pink-600">
+                (<%= @stats[:women][:bunks] %> bunks, <%= @stats[:women][:owned] %> owned)
+              </span>
+            </h2>
+          </div>
+          
+          <% @women_rooms.each do |room| %>
+            <div class="border-b border-gray-200 last:border-b-0">
+              <div class="px-6 py-3 bg-gray-50">
+                <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+              </div>
+              
+              <div class="p-6">
+                <div class="space-y-3">
+                  <% room.bunks.ordered.each do |bunk| %>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div class="flex items-center space-x-3">
+                        <span class="font-medium text-gray-900"><%= bunk.name %></span>
+                        <span class="text-sm text-gray-500">(<%= bunk.bunk_type %>)</span>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <%= select_tag "bunks[#{bunk.id}][owner_id]", 
+                            options_from_collection_for_select(User.all.order(:name), :id, :display_name, bunk.owner_id),
+                            { include_blank: "Open", class: "rounded-md border-gray-300 text-sm" } %>
+                        <%= link_to "Edit", edit_bunk_admin_master_bunk_list_path(bunk), 
+                            class: "text-blue-600 hover:text-blue-900 text-sm" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Men's Rooms -->
+        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+          <div class="px-6 py-4 bg-blue-50 border-b border-blue-200">
+            <h2 class="text-lg font-semibold text-blue-800">
+              MEN'S ROOMS
+              <span class="text-sm font-normal text-blue-600">
+                (<%= @stats[:men][:bunks] %> bunks, <%= @stats[:men][:owned] %> owned)
+              </span>
+            </h2>
+          </div>
+          
+          <% @men_rooms.each do |room| %>
+            <div class="border-b border-gray-200 last:border-b-0">
+              <div class="px-6 py-3 bg-gray-50">
+                <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+              </div>
+              
+              <div class="p-6">
+                <div class="space-y-3">
+                  <% room.bunks.ordered.each do |bunk| %>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div class="flex items-center space-x-3">
+                        <span class="font-medium text-gray-900"><%= bunk.name %></span>
+                        <span class="text-sm text-gray-500">(<%= bunk.bunk_type %>)</span>
+                      </div>
+                      <div class="flex items-center space-x-2">
+                        <%= select_tag "bunks[#{bunk.id}][owner_id]", 
+                            options_from_collection_for_select(User.all.order(:name), :id, :display_name, bunk.owner_id),
+                            { include_blank: "Open", class: "rounded-md border-gray-300 text-sm" } %>
+                        <%= link_to "Edit", edit_bunk_admin_master_bunk_list_path(bunk), 
+                            class: "text-blue-600 hover:text-blue-900 text-sm" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="mt-6 flex justify-end">
+        <%= submit_tag "Save All Changes", 
+            class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700" %>
+      </div>
+    <% end %>
+  </div>
+</div> 

@@ -1,0 +1,626 @@
+<% content_for :title, "Edit Bunk List - Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
+
+<div class="min-h-screen bg-gray-50 py-8" data-controller="bunk-editor">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">
+            Edit Bunk List - Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %>
+          </h1>
+          <p class="mt-1 text-sm text-gray-600">
+            <%= pluralize(@reservation_week.reservations.count, 'reservation') %> • 
+            <%= pluralize(@reservation_week.guests.count, 'guest') %> • 
+            <%= pluralize(@bunk_assignments.count, 'assignment') %> • 
+            <%= pluralize(@unassigned_assignables.count, 'unassigned') %>
+          </p>
+          <% if @reservation_week.note.present? %>
+            <div class="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p class="text-sm text-yellow-800">
+                <span class="font-medium">Week Note:</span> <%= @reservation_week.note %>
+              </p>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2">
+          <%= link_to "← Cancel", bunk_list_path(@reservation_week), 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+          <button type="submit" form="bunk-assignment-form"
+                  class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-blue-800">How to edit assignments:</h3>
+          <div class="mt-2 text-sm text-blue-700">
+            <ul class="list-disc list-inside space-y-1">
+              <li>Use the dropdown menus to assign people to bunks</li>
+              <li>Click "Quick Assign" to automatically assign to the first available bunk</li>
+              <li>Drag and drop people from unassigned lists to bunks</li>
+              <li>Drag people between bunks to reassign them</li>
+              <li>Set a bunk to "Empty" to unassign someone</li>
+              <li>Add new guests using the form on the right</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Main Bunk List Display -->
+      <div class="lg:col-span-2 space-y-6">
+        <%= form_with model: @reservation_week, url: bunk_list_path(@reservation_week), method: :patch, 
+              data: { 'bunk-editor-target': 'form' }, local: true, id: "bunk-assignment-form" do |form| %>
+          
+              <!-- Women's Rooms -->
+    <div class="bg-white rounded-lg shadow-sm mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Women's Rooms</h2>
+      </div>
+      
+      <!-- Unassigned Women - Sticky at top -->
+      <div class="sticky-unassigned-section bg-red-50 border-b border-red-200" data-gender="women" data-bunk-editor-target="unassignedArea">
+        <div class="px-6 py-4">
+          <h3 class="text-sm font-medium text-red-800 mb-3">
+            Unassigned Women (<%= @unassigned_assignables.select { |a| a.sex&.downcase == 'female' }.count %>)
+          </h3>
+          
+          <div class="flex flex-wrap gap-2">
+            <% @unassigned_assignables.select { |a| a.sex&.downcase == 'female' }.each do |assignable| %>
+              <div class="draggable-person inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 border border-red-200 hover:bg-red-200 cursor-move"
+                   draggable="true"
+                   data-reservation-id="<%= assignable.id %>"
+                   data-reservation-name="<%= assignable.name %>"
+                   data-reservation-gender="<%= assignable.sex&.downcase %>"
+                   data-assignable-type="<%= assignable.class.name %>"
+                   data-assignable-id="<%= assignable.id %>">
+                <%= assignable.name %>
+                <% if assignable.is_a?(Guest) %>
+                  <span class="ml-1 text-red-600">👤</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          
+          <% if @unassigned_assignables.select { |a| a.sex&.downcase == 'female' }.empty? %>
+            <p class="text-sm text-red-600 italic">No unassigned women</p>
+          <% end %>
+        </div>
+      </div>
+      
+      <!-- Room content container -->
+      <div class="relative">
+            
+            <% @women_rooms.each do |room| %>
+              <div class="border-b border-gray-200 last:border-b-0">
+                <div class="px-6 py-3 bg-gray-50">
+                  <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+                </div>
+                
+                <div class="p-6">
+                  <div class="space-y-4">
+                    <% room.bunks.ordered.each do |bunk| %>
+                      <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+                      <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 bunk-drop-zone" 
+                           data-bunk-id="<%= bunk.id %>" 
+                           data-gender="women"
+                           data-bunk-editor-target="dropZone">
+                        <div class="flex items-center space-x-3">
+                          <span class="font-medium text-gray-900"><%= bunk.name %></span>
+                          <span class="text-sm text-gray-500">(<%= bunk.bunk_type %>)</span>
+                          <% if bunk.owner %>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              Owner: <%= bunk.owner.display_name %>
+                            </span>
+                          <% end %>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                          <!-- Assigned Person (draggable) -->
+                          <div data-bunk-editor-target="assignedPerson" class="min-w-0 flex-1">
+                            <% if assignment %>
+                              <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-pink-100 border border-pink-200 cursor-move" 
+                                   draggable="true"
+                                   data-reservation-id="<%= assignment.assignable_id %>"
+                                   data-reservation-name="<%= assignment.assignable.name %>"
+                                   data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
+                                <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-pink-800">
+                                  <%= assignment.assignable.name %>
+                                  <% if assignment.assignable_type == 'Guest' %>
+                                    <span class="text-xs text-pink-600">(Guest)</span>
+                                  <% end %>
+                                </span>
+                              </div>
+                            <% else %>
+                              <div class="text-center py-3 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                                Drop here or select below
+                              </div>
+                            <% end %>
+                          </div>
+                          
+                          <!-- Dropdown Selector -->
+                          <div class="w-48">
+                            <% 
+                              women_reservations = @reservation_week.reservations.where(sex: ['female', 'Female'])
+                              women_guests = @reservation_week.guests.where(sex: ['female', 'Female'])
+                              
+                              current_assignment = assignment ? "#{assignment.assignable_type}:#{assignment.assignable_id}" : nil
+                            %>
+                            <%= select_tag "assignments[#{bunk.id}]",
+                                grouped_options_for_select([
+                                  ['Reservations', women_reservations.map { |r| [r.name, "Reservation:#{r.id}"] }],
+                                  ['Guests', women_guests.map { |g| [g.name, "Guest:#{g.id}"] }]
+                                ], current_assignment),
+                                { 
+                                  include_blank: "Empty", 
+                                  class: "block w-full rounded-md border-gray-300 text-sm focus:border-pink-500 focus:ring-pink-500",
+                                  data: { 'bunk-editor-target': 'assignmentSelect' }
+                                } %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+
+
+              <!-- Men's Rooms -->
+    <div class="bg-white rounded-lg shadow-sm mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Men's Rooms</h2>
+      </div>
+      
+      <!-- Unassigned Men - Sticky at top -->
+      <div class="sticky-unassigned-section bg-blue-50 border-b border-blue-200" data-gender="men" data-bunk-editor-target="unassignedArea">
+        <div class="px-6 py-4">
+          <h3 class="text-sm font-medium text-blue-800 mb-3">
+            Unassigned Men (<%= @unassigned_assignables.select { |a| a.sex&.downcase == 'male' }.count %>)
+          </h3>
+          
+          <div class="flex flex-wrap gap-2">
+            <% @unassigned_assignables.select { |a| a.sex&.downcase == 'male' }.each do |assignable| %>
+              <div class="draggable-person inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 cursor-move"
+                   draggable="true"
+                   data-reservation-id="<%= assignable.id %>"
+                   data-reservation-name="<%= assignable.name %>"
+                   data-reservation-gender="<%= assignable.sex&.downcase %>"
+                   data-assignable-type="<%= assignable.class.name %>"
+                   data-assignable-id="<%= assignable.id %>">
+                <%= assignable.name %>
+                <% if assignable.is_a?(Guest) %>
+                  <span class="ml-1 text-blue-600">👤</span>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          
+          <% if @unassigned_assignables.select { |a| a.sex&.downcase == 'male' }.empty? %>
+            <p class="text-sm text-blue-600 italic">No unassigned men</p>
+          <% end %>
+        </div>
+      </div>
+      
+            <% @men_rooms.each do |room| %>
+              <div class="border-b border-gray-200 last:border-b-0">
+                <div class="px-6 py-3 bg-gray-50">
+                  <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+                </div>
+                
+                <div class="p-6">
+                  <div class="space-y-4">
+                    <% room.bunks.ordered.each do |bunk| %>
+                      <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+                      <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 bunk-drop-zone" 
+                           data-bunk-id="<%= bunk.id %>" 
+                           data-gender="men"
+                           data-bunk-editor-target="dropZone">
+                        <div class="flex items-center space-x-3">
+                          <span class="font-medium text-gray-900"><%= bunk.name %></span>
+                          <span class="text-sm text-gray-500">(<%= bunk.bunk_type %>)</span>
+                          <% if bunk.owner %>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                              Owner: <%= bunk.owner.display_name %>
+                            </span>
+                          <% end %>
+                        </div>
+                        
+                        <div class="flex items-center space-x-3">
+                          <!-- Assigned Person (draggable) -->
+                          <div data-bunk-editor-target="assignedPerson" class="min-w-0 flex-1">
+                            <% if assignment %>
+                              <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-blue-100 border border-blue-200 cursor-move" 
+                                   draggable="true"
+                                   data-reservation-id="<%= assignment.assignable_id %>"
+                                   data-reservation-name="<%= assignment.assignable.name %>"
+                                   data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
+                                <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-blue-800">
+                                  <%= assignment.assignable.name %>
+                                  <% if assignment.assignable_type == 'Guest' %>
+                                    <span class="text-xs text-blue-600">(Guest)</span>
+                                  <% end %>
+                                </span>
+                              </div>
+                            <% else %>
+                              <div class="text-center py-3 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                                Drop here or select below
+                              </div>
+                            <% end %>
+                          </div>
+                          
+                          <!-- Dropdown Selector -->
+                          <div class="w-48">
+                            <% 
+                              men_reservations = @reservation_week.reservations.where(sex: ['male', 'Male'])
+                              men_guests = @reservation_week.guests.where(sex: ['male', 'Male'])
+                              
+                              current_assignment = assignment ? "#{assignment.assignable_type}:#{assignment.assignable_id}" : nil
+                            %>
+                            <%= select_tag "assignments[#{bunk.id}]",
+                                grouped_options_for_select([
+                                  ['Reservations', men_reservations.map { |r| [r.name, "Reservation:#{r.id}"] }],
+                                  ['Guests', men_guests.map { |g| [g.name, "Guest:#{g.id}"] }]
+                                ], current_assignment),
+                                { 
+                                  include_blank: "Empty", 
+                                  class: "block w-full rounded-md border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500",
+                                  data: { 'bunk-editor-target': 'assignmentSelect' }
+                                } %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+
+
+          <!-- Coed Rooms -->
+          <% if @coed_rooms.any? %>
+            <div class="bg-white rounded-lg shadow-sm mb-6">
+              <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Coed Rooms</h2>
+              </div>
+              
+              <!-- Unassigned People for Coed Rooms - Sticky at top -->
+              <div class="sticky-unassigned-section bg-purple-50 border-b border-purple-200" data-gender="coed" data-bunk-editor-target="unassignedArea">
+                <div class="px-6 py-4">
+                  <h3 class="text-sm font-medium text-purple-800 mb-3">
+                    Unassigned People (All) (<%= @unassigned_assignables.count %>)
+                  </h3>
+                  
+                  <div class="flex flex-wrap gap-2">
+                    <% @unassigned_assignables.each do |assignable| %>
+                      <div class="draggable-person inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= assignable.sex&.downcase == 'female' ? 'bg-pink-100 text-pink-800 border-pink-200' : 'bg-blue-100 text-blue-800 border-blue-200' %> hover:bg-opacity-80 cursor-move"
+                           draggable="true"
+                           data-reservation-id="<%= assignable.id %>"
+                           data-reservation-name="<%= assignable.name %>"
+                           data-reservation-gender="<%= assignable.sex&.downcase %>"
+                           data-assignable-type="<%= assignable.class.name %>"
+                           data-assignable-id="<%= assignable.id %>">
+                        <%= assignable.name %>
+                        <% if assignable.is_a?(Guest) %>
+                          <span class="ml-1 text-purple-600">👤</span>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                  
+                  <% if @unassigned_assignables.empty? %>
+                    <p class="text-sm text-purple-600 italic">No unassigned people</p>
+                  <% end %>
+                </div>
+              </div>
+              
+              <% @coed_rooms.each do |room| %>
+                <div class="border-b border-gray-200 last:border-b-0">
+                  <div class="px-6 py-3 bg-gray-50">
+                    <h3 class="text-md font-medium text-gray-900"><%= room.name %></h3>
+                  </div>
+                  
+                  <div class="p-6">
+                    <div class="space-y-4">
+                      <% room.bunks.ordered.each do |bunk| %>
+                        <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 bunk-drop-zone" 
+                             data-bunk-id="<%= bunk.id %>" 
+                             data-gender="coed"
+                             data-bunk-editor-target="dropZone">
+                          <div class="flex items-center space-x-3">
+                            <span class="font-medium text-gray-900"><%= bunk.name %></span>
+                            <span class="text-sm text-gray-500">(<%= bunk.bunk_type %>)</span>
+                            <% if bunk.owner %>
+                              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                Owner: <%= bunk.owner.display_name %>
+                              </span>
+                            <% end %>
+                          </div>
+                          
+                          <div class="flex items-center space-x-3">
+                            <!-- Assigned Person (draggable) -->
+                            <div data-bunk-editor-target="assignedPerson" class="min-w-0 flex-1">
+                              <% if assignment %>
+                                <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-purple-100 border border-purple-200 cursor-move" 
+                                     draggable="true"
+                                     data-reservation-id="<%= assignment.assignable_id %>"
+                                     data-reservation-name="<%= assignment.assignable.name %>"
+                                     data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
+                                  <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
+                                  </svg>
+                                  <span class="text-sm font-medium text-purple-800">
+                                    <%= assignment.assignable.name %>
+                                    <% if assignment.assignable_type == 'Guest' %>
+                                      <span class="text-xs text-purple-600">(Guest)</span>
+                                    <% end %>
+                                  </span>
+                                </div>
+                              <% else %>
+                                <div class="text-center py-3 text-gray-400 text-sm border-2 border-dashed border-gray-200 rounded-lg">
+                                  Drop here or select below
+                                </div>
+                              <% end %>
+                            </div>
+                            
+                            <!-- Dropdown Selector -->
+                            <div class="w-48">
+                              <% 
+                                all_reservations = @reservation_week.reservations
+                                all_guests = @reservation_week.guests
+                                
+                                current_assignment = assignment ? "#{assignment.assignable_type}:#{assignment.assignable_id}" : nil
+                              %>
+                              <%= select_tag "assignments[#{bunk.id}]",
+                                  grouped_options_for_select([
+                                    ['Reservations', all_reservations.map { |r| [r.name, "Reservation:#{r.id}"] }],
+                                    ['Guests', all_guests.map { |g| [g.name, "Guest:#{g.id}"] }]
+                                  ], current_assignment),
+                                  { 
+                                    include_blank: "Empty", 
+                                    class: "block w-full rounded-md border-gray-300 text-sm focus:border-purple-500 focus:ring-purple-500",
+                                    data: { 'bunk-editor-target': 'assignmentSelect' }
+                                  } %>
+                            </div>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+        <% end %>
+    </div>
+
+    <!-- Sidebar: Add Guest & Quick Actions -->
+      <div class="lg:col-span-1">
+        <div class="sticky-sidebar space-y-6">
+          <!-- Add Guest Form -->
+          <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-medium text-gray-900">Add Guest</h3>
+            </div>
+            
+            <%= form_with model: @new_guest, url: add_guest_bunk_list_path(@reservation_week), method: :post, local: true, authenticity_token: true do |form| %>
+              <div class="p-6 space-y-4">
+                <div>
+                  <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Guest name" %>
+                </div>
+                
+                <div>
+                  <%= form.label :sex, class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.select :sex, 
+                      options_for_select([['Male', 'male'], ['Female', 'female']]), 
+                      { prompt: 'Select gender' }, 
+                      { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
+                </div>
+                
+                <div>
+                  <%= form.label :guest_type, class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.select :guest_type, 
+                      options_for_select([['Family Guest', 'family'], ['Friend', 'friend'], ['Work Guest', 'work'], ['Other', 'other']]), 
+                      { prompt: 'Select type' }, 
+                      { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
+                </div>
+                
+                <div>
+                  <%= form.label :phone, class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.text_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Phone number" %>
+                </div>
+                
+                <div>
+                  <%= form.label :email, class: "block text-sm font-medium text-gray-700" %>
+                  <%= form.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Email address" %>
+                </div>
+                
+                <div class="pt-2">
+                  <%= form.submit "Add Guest", class: "w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-indigo-700" %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+            </div>
+            
+            <div class="p-6 space-y-3">
+              <%= button_to "Auto-assign Unassigned", bunk_list_path(@reservation_week), 
+                  method: :patch,
+                  params: { auto_assign: true },
+                  data: { turbo_confirm: "This will automatically assign all unassigned members to available bunks. Continue?" },
+                  class: "w-full inline-flex justify-center items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700" %>
+              
+              <%= button_to "Clear All Assignments", generate_bunk_list_path(@reservation_week), 
+                  method: :post,
+                  data: { turbo_confirm: "This will clear ALL assignments and regenerate them automatically. Continue?" },
+                  class: "w-full inline-flex justify-center items-center px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700" %>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+              <h3 class="text-lg font-medium text-gray-900">Summary</h3>
+            </div>
+            
+            <div class="p-6 space-y-3">
+              <div class="flex justify-between text-sm">
+                <span>Total Unassigned:</span>
+                <span class="font-medium"><%= @unassigned_assignables.count %></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span>Total Assigned:</span>
+                <span class="font-medium"><%= @bunk_assignments.count %></span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span>Total Bunks:</span>
+                <span class="font-medium"><%= Bunk.count %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .bunk-drop-zone.drag-over {
+    @apply border-green-400 bg-green-50;
+  }
+  
+  .draggable-person.dragging {
+    @apply opacity-50;
+  }
+  
+  .gender-mismatch {
+    @apply border-red-400 bg-red-50;
+  }
+  
+  /* Sticky unassigned sections - with proper drop zone accessibility */
+  .sticky-unassigned-section {
+    position: sticky;
+    top: 0; /* Stick to the very top */
+    z-index: 20; /* Reasonable z-index that doesn't interfere with drop zones */
+    backdrop-filter: blur(10px); /* Add subtle blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for visibility */
+    border-radius: 0.5rem; /* Rounded corners */
+    margin-bottom: 1rem; /* Space below */
+    /* Clean styling without debug borders */
+  }
+  
+  /* When dragging, make sticky sections transparent to pointer events */
+  .draggable-person.dragging ~ .sticky-unassigned-section,
+  .draggable-person.dragging + .sticky-unassigned-section {
+    pointer-events: none !important;
+  }
+  
+  /* But allow pointer events on the draggable elements inside sticky sections */
+  .sticky-unassigned-section .draggable-person {
+    pointer-events: auto !important;
+  }
+  
+
+
+
+
+  .sticky-unassigned-section .draggable-person {
+    z-index: 21; /* Ensure draggable people are above the sticky section */
+  }
+  
+  /* Sticky sidebar improvements */
+  .sticky-sidebar {
+    position: sticky;
+    top: 1.5rem;
+    max-height: calc(100vh - 3rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  .sticky-sidebar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .sticky-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .sticky-sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 2px;
+  }
+  
+  .sticky-sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.8);
+  }
+  
+  /* Ensure drag elements work across scrolling containers */
+  .draggable-person {
+    z-index: 1000;
+    position: relative;
+  }
+  
+  .draggable-person.dragging {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1001;
+  }
+  
+  /* Ensure drop zones work with sticky sections */
+  .bunk-drop-zone {
+    position: relative;
+    z-index: 10;
+  }
+  
+  .bunk-drop-zone.drag-over {
+    z-index: 50; /* Much higher than sticky sections when dragging over */
+    transform: scale(1.02); /* Slightly enlarge when dragging over */
+    transition: all 0.2s ease;
+    border-color: #10b981 !important; /* Green border when dragging over */
+    background-color: #ecfdf5 !important; /* Light green background */
+  }
+  
+  /* When dragging, ensure drop zones are accessible */
+  .draggable-person.dragging ~ .bunk-drop-zone,
+  .draggable-person.dragging + .bunk-drop-zone {
+    z-index: 50 !important;
+  }
+  
+  /* Ensure drop zones are always accessible during drag */
+  .draggable-person.dragging ~ * .bunk-drop-zone {
+    z-index: 50 !important;
+  }
+</style> 

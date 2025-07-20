@@ -59,13 +59,55 @@
           <td><%= bunk.name %></td>
           <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
           <td>
-            <%= assignment ? assignment.reservation.name : "" %>
+            <% if assignment %>
+              <%= assignment.assignable.name %>
+              <% if assignment.assignable_type == 'Guest' %>
+                (Guest)
+              <% end %>
+            <% end %>
           </td>
           <td><%= bunk.bunk_type %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+<% end %>
+
+<% if @coed_rooms.any? %>
+  <div class="section-title">Coed Rooms</div>
+
+  <% @coed_rooms.each do |room| %>
+    <div class="room-title"><%= room.name %></div>
+    
+    <table>
+      <thead>
+        <tr>
+          <th width="15%">Bunk</th>
+          <th width="35%">Owner</th>
+          <th width="35%">Occupant</th>
+          <th width="15%">Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% room.bunks.ordered.each do |bunk| %>
+          <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+          <tr>
+            <td><%= bunk.name %></td>
+            <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+            <td>
+              <% if assignment %>
+                <%= assignment.assignable.name %>
+                <% if assignment.assignable_type == 'Guest' %>
+                  (Guest)
+                <% end %>
+              <% end %>
+            </td>
+            <td><%= bunk.bunk_type %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
 <% end %>
 
 <div class="summary">
@@ -95,12 +137,21 @@
         <td><%= @stats[:men][:open] %></td>
         <td><%= @stats[:men][:owned] %></td>
       </tr>
+      <% if @coed_rooms.any? %>
+        <tr>
+          <td><strong>Coed Bunks</strong></td>
+          <td><%= @stats[:coed][:total] %></td>
+          <td><%= @stats[:coed][:occupied] %></td>
+          <td><%= @stats[:coed][:open] %></td>
+          <td><%= @stats[:coed][:owned] %></td>
+        </tr>
+      <% end %>
       <tr style="border-top: 2px solid #333;">
         <td><strong>Total Bunks</strong></td>
         <td><%= @stats[:total][:total] %></td>
         <td><%= @stats[:total][:occupied] %></td>
         <td><%= @stats[:total][:total] - @stats[:total][:occupied] %></td>
-        <td><%= @stats[:women][:owned] + @stats[:men][:owned] %></td>
+        <td><%= @stats[:women][:owned] + @stats[:men][:owned] + (@stats[:coed] ? @stats[:coed][:owned] : 0) %></td>
       </tr>
     </tbody>
   </table>
