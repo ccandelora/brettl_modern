@@ -7,10 +7,10 @@
       /* Print and screen styles */
       body {
         margin: 0;
-        padding: 0.5in;
+        padding: 0.3in;
         font-family: Arial, sans-serif;
-        font-size: 11pt;
-        line-height: 1.3;
+        font-size: 8pt;
+        line-height: 1.1;
         background: white;
         color: black;
       }
@@ -18,113 +18,167 @@
       /* Header styling */
       .header {
         text-align: center;
-        margin-bottom: 20px;
-        padding: 10px;
-        border-bottom: 2px solid #000;
+        margin-bottom: 12px;
+        padding: 6px;
+        border-bottom: 1px solid #000;
       }
 
       .header h1 {
-        font-size: 18pt;
+        font-size: 14pt;
         margin: 0;
         color: #000;
       }
 
       .header h2 {
-        font-size: 14pt;
-        margin: 5px 0;
+        font-size: 11pt;
+        margin: 3px 0;
         color: #333;
       }
 
       .header p {
-        font-size: 11pt;
-        margin: 5px 0;
+        font-size: 8pt;
+        margin: 3px 0;
         font-style: italic;
+      }
+
+      /* Two-column layout */
+      .content-wrapper {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+      }
+
+      .column {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .column-left {
+        border-right: 1px solid #ccc;
+        padding-right: 10px;
+      }
+
+      .column-right {
+        padding-left: 10px;
       }
 
       /* Section titles */
       .section-title {
         background-color: #f0f0f0;
-        padding: 5px 10px;
-        margin: 15px 0 10px 0;
+        padding: 3px 6px;
+        margin: 8px 0 5px 0;
         font-weight: bold;
-        font-size: 12pt;
+        font-size: 9pt;
         page-break-after: avoid;
+        border: 1px solid #ccc;
       }
 
       /* Room titles */
       .room-title {
         font-weight: bold;
-        margin: 10px 0 5px 0;
-        font-size: 11pt;
+        margin: 6px 0 3px 0;
+        font-size: 8pt;
         page-break-after: avoid;
+        text-decoration: underline;
       }
 
       /* Table styling */
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 15px;
+        margin-bottom: 8px;
         page-break-inside: avoid;
       }
 
       th, td {
-        border: 1px solid #000;
-        padding: 4px 6px;
+        border: 1px solid #666;
+        padding: 2px 3px;
         text-align: left;
-        font-size: 10pt;
+        font-size: 7pt;
+        line-height: 1.0;
       }
 
       th {
         background-color: #f0f0f0;
         font-weight: bold;
+        font-size: 7pt;
       }
 
       tr:nth-child(even) {
         background-color: #f9f9f9;
       }
 
-      /* Column widths */
-      th:nth-child(1), td:nth-child(1) { width: 15%; }
-      th:nth-child(2), td:nth-child(2) { width: 35%; }
-      th:nth-child(3), td:nth-child(3) { width: 35%; }
-      th:nth-child(4), td:nth-child(4) { width: 15%; }
+      /* Compact column widths */
+      th:nth-child(1), td:nth-child(1) { width: 12%; } /* Bunk */
+      th:nth-child(2), td:nth-child(2) { width: 38%; } /* Owner */
+      th:nth-child(3), td:nth-child(3) { width: 38%; } /* Occupant */
+      th:nth-child(4), td:nth-child(4) { width: 12%; } /* Type */
 
-      /* Statistics Table */
-      .statistics-table {
-        width: 100%;
-        margin-bottom: 20px;
-        page-break-inside: avoid;
-      }
-
-      .statistics-table th,
-      .statistics-table td {
+      /* Statistics and footer */
+      .footer-info {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #ccc;
+        font-size: 7pt;
         text-align: center;
-        padding: 6px;
+        column-span: all;
       }
 
-      .statistics-table td:first-child {
-        text-align: left;
+      .footer-info p {
+        margin: 2px 0;
+        display: inline-block;
+        margin-right: 15px;
       }
 
-      .statistics-table tr.totals {
-        border-top: 2px solid #000;
-        font-weight: bold;
-      }
-
-      .statistics-table tr.totals td {
-        background-color: #f0f0f0;
+      /* Coed rooms - full width at bottom if needed */
+      .full-width-section {
+        width: 100%;
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px solid #ccc;
       }
 
       /* Print specific */
       @page {
         size: letter portrait;
-        margin: 0.5in;
+        margin: 0.3in;
       }
 
       @media print {
-        body { padding: 0; }
+        body { 
+          padding: 0; 
+          font-size: 7pt;
+        }
         .no-print { display: none !important; }
         .page-break { page-break-after: always; }
+        
+        /* Ensure two-column layout works in print */
+        .content-wrapper {
+          display: flex !important;
+        }
+        
+        .column {
+          flex: 1 !important;
+        }
+      }
+      
+      /* Responsive adjustments for smaller content */
+      @media screen and (max-width: 800px) {
+        .content-wrapper {
+          flex-direction: column;
+        }
+        
+        .column-left {
+          border-right: none;
+          border-bottom: 1px solid #ccc;
+          padding-right: 0;
+          padding-bottom: 10px;
+          margin-bottom: 10px;
+        }
+        
+        .column-right {
+          padding-left: 0;
+        }
       }
     </style>
   </head>

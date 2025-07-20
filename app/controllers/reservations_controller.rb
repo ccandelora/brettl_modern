@@ -43,7 +43,28 @@ class ReservationsController < ApplicationController
     end
 
     @reservation = @reservation_week.reservations.new(reservation_params)
-    @reservation.user = current_user
+
+    # Handle different reservation types
+    case @reservation.reservation_type
+    when "myself"
+      # Reservation for the current user
+      @reservation.user = current_user
+      @reservation.name = current_user.name if @reservation.name.blank?
+    when "other_member"
+      # Reservation for another member - assign to their account
+      if @reservation.other_member_id.present?
+        other_member = User.find(@reservation.other_member_id)
+        @reservation.user = other_member
+        @reservation.name = other_member.name if @reservation.name.blank?
+      else
+        @reservation.errors.add(:other_member_id, "must be selected")
+        render :new and return
+      end
+    when "guest"
+      # Guest reservation - stays with current user but with guest name
+      @reservation.user = current_user
+      # guest_user_id can be used to link to a member if needed
+    end
 
     if @reservation.save
       redirect_to app_reservation_week_path(date: @reservation_week.res_date.strftime("%Y-%m-%d")), notice: "Reservation was successfully created."
@@ -85,7 +106,7 @@ class ReservationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def reservation_params
-      params.require(:reservation).permit(:name, :wed, :thur, :fri, :sat, :sun, :mon, :tue, :dinner, :comment, :sex, :res_member_type, :reservation_date, :confirmation_number)
+      params.require(:reservation).permit(:name, :wed, :thur, :fri, :sat, :sun, :mon, :tue, :dinner, :comment, :sex, :res_member_type, :reservation_date, :confirmation_number, :reservation_type, :guest_user_id, :other_member_id)
     end
 
     def authorize_admin!

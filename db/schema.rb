@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_17_024209) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_20_222411) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -153,6 +153,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_17_024209) do
     t.string "res_member_type"
     t.date "reservation_date"
     t.string "confirmation_number"
+    t.string "reservation_type"
+    t.integer "guest_user_id"
+    t.integer "other_member_id"
     t.index ["reservation_week_id"], name: "index_reservations_on_reservation_week_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

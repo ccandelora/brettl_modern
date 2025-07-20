@@ -24,7 +24,7 @@ module Admin
                                                .includes(:bunk, assignable: :user)
       @guest_assignments = @reservation_week.bunk_assignments
                                          .where(assignable_type: "Guest")
-                                         .includes(:bunk, :assignable)
+                                         .includes(:bunk)
 
       # Combine the assignments for the view
       @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
@@ -38,13 +38,12 @@ module Admin
       @coed_rooms = @rooms.coed
 
       # Load assignments and split by type to handle polymorphic associations
-      @bunk_assignments = @reservation_week.bunk_assignments.includes(:bunk)
       @reservation_assignments = @reservation_week.bunk_assignments
                                                .where(assignable_type: "Reservation")
                                                .includes(:bunk, assignable: :user)
       @guest_assignments = @reservation_week.bunk_assignments
                                          .where(assignable_type: "Guest")
-                                         .includes(:bunk, :assignable)
+                                         .includes(:bunk)
 
       # Combine the assignments for the view
       @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
@@ -82,17 +81,33 @@ module Admin
     def add_guest
       @guest = @reservation_week.guests.build(guest_params)
 
+      Rails.logger.info "Adding guest with params: #{guest_params.inspect}"
+      Rails.logger.info "Guest valid? #{@guest.valid?}"
+      Rails.logger.info "Guest errors: #{@guest.errors.full_messages}" unless @guest.valid?
+
       if @guest.save
-        redirect_to edit_admin_bunk_list_path(@reservation_week), notice: "Guest added successfully!"
+        Rails.logger.info "Guest saved successfully: #{@guest.inspect}"
+        redirect_to edit_admin_bunk_list_path(@reservation_week, form_reset: true), notice: "Guest added successfully!"
       else
+        Rails.logger.error "Failed to save guest: #{@guest.errors.full_messages}"
         @rooms = Room.includes(:bunks).ordered
         @women_rooms = @rooms.women
         @men_rooms = @rooms.men
         @coed_rooms = @rooms.coed
-        @bunk_assignments = @reservation_week.bunk_assignments.includes(:assignable, :bunk)
+
+        # Load assignments and split by type to handle polymorphic associations
+        @reservation_assignments = @reservation_week.bunk_assignments
+                                                 .where(assignable_type: "Reservation")
+                                                 .includes(:bunk, assignable: :user)
+        @guest_assignments = @reservation_week.bunk_assignments
+                                           .where(assignable_type: "Guest")
+                                           .includes(:bunk)
+
+        # Combine the assignments for the view
+        @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
         @unassigned_assignables = unassigned_assignables_for_week
         @new_guest = @guest
-        render :edit, alert: "Error adding guest."
+        render :edit, alert: "Error adding guest: #{@guest.errors.full_messages.join(', ')}"
       end
     end
 
@@ -117,7 +132,7 @@ module Admin
                                                .includes(:bunk, assignable: :user)
       @guest_assignments = @reservation_week.bunk_assignments
                                          .where(assignable_type: "Guest")
-                                         .includes(:bunk, :assignable)
+                                         .includes(:bunk)
 
       @stats = calculate_bunk_statistics
       render layout: "print"
@@ -154,26 +169,26 @@ module Admin
     end
 
     def guest_params
-      params.require(:guest).permit(:name, :sex)
+      params.require(:guest).permit(:name, :sex, :guest_type, :phone, :email)
     end
 
     def update_manual_assignments(assignment_params)
       ActiveRecord::Base.transaction do
-        assignment_params.each do |bunk_id, assignable_info|
-          next if assignable_info[:id].blank?
-
+        assignment_params.each do |bunk_id, assignable_value|
           bunk = Bunk.find(bunk_id)
-          assignable_type = assignable_info[:type]
-          assignable_id = assignable_info[:id]
 
           # Find or initialize the assignment
           assignment = @reservation_week.bunk_assignments.find_or_initialize_by(bunk: bunk)
 
-          if assignable_id == "clear"
+          if assignable_value.blank? || assignable_value == "clear"
+            # Clear the assignment
             assignment.destroy if assignment.persisted?
           else
+            # Parse the assignable_value which is in format "Type:ID"
+            assignable_type, assignable_id = assignable_value.split(":")
+
             assignment.assignable_type = assignable_type
-            assignment.assignable_id = assignable_id
+            assignment.assignable_id = assignable_id.to_i
             assignment.save!
           end
         end
@@ -220,7 +235,7 @@ module Admin
     end
 
     def unassigned_assignables_for_week
-      reservations = @reservation_week.reservations.includes(:user)
+      reservations = @reservation_week.reservations
       guests = @reservation_week.guests
       assigned_ids = @bunk_assignments.pluck(:assignable_id)
 

@@ -12,10 +12,14 @@ class Guest < ApplicationRecord
   end
 
   def gender_for_room
-    sex&.downcase == 'male' ? 'men' : 'women'
+    sex&.downcase == "male" ? "men" : "women"
   end
 
   def display_name
+    name
+  end
+
+  def effective_name
     name
   end
 

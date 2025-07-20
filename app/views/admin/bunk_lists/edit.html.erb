@@ -136,13 +136,13 @@
                               <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-pink-100 border border-pink-200 cursor-move"
                                    draggable="true"
                                    data-reservation-id="<%= assignment.assignable_id %>"
-                                   data-reservation-name="<%= assignment.assignable.name %>"
+                                   data-reservation-name="<%= assignment.assignable.effective_name %>"
                                    data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
                                 <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                   <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
                                 </svg>
                                 <span class="text-sm font-medium text-pink-800">
-                                  <%= assignment.assignable.name %>
+                                  <%= assignment.assignable.effective_name %>
                                   <% if assignment.assignable_type == 'Guest' %>
                                     <span class="text-xs text-pink-600">(Guest)</span>
                                   <% end %>
@@ -252,13 +252,13 @@
                               <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-blue-100 border border-blue-200 cursor-move"
                                    draggable="true"
                                    data-reservation-id="<%= assignment.assignable_id %>"
-                                   data-reservation-name="<%= assignment.assignable.name %>"
+                                   data-reservation-name="<%= assignment.assignable.effective_name %>"
                                    data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
                                 <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                   <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
                                 </svg>
                                 <span class="text-sm font-medium text-blue-800">
-                                  <%= assignment.assignable.name %>
+                                  <%= assignment.assignable.effective_name %>
                                   <% if assignment.assignable_type == 'Guest' %>
                                     <span class="text-xs text-blue-600">(Guest)</span>
                                   <% end %>
@@ -369,13 +369,13 @@
                                 <div class="draggable-person inline-flex items-center px-3 py-2 rounded-lg bg-purple-100 border border-purple-200 cursor-move"
                                      draggable="true"
                                      data-reservation-id="<%= assignment.assignable_id %>"
-                                     data-reservation-name="<%= assignment.assignable.name %>"
+                                     data-reservation-name="<%= assignment.assignable.effective_name %>"
                                      data-reservation-gender="<%= assignment.assignable.sex&.downcase %>">
                                   <svg class="h-4 w-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M7 2a1 1 0 000 2h6a1 1 0 100-2H7zM4 6a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 10a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zM2 14a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z"></path>
                                   </svg>
                                   <span class="text-sm font-medium text-purple-800">
-                                    <%= assignment.assignable.name %>
+                                    <%= assignment.assignable.effective_name %>
                                     <% if assignment.assignable_type == 'Guest' %>
                                       <span class="text-xs text-purple-600">(Guest)</span>
                                     <% end %>
@@ -428,41 +428,29 @@
           <h3 class="text-lg font-medium text-gray-900">Add Guest</h3>
         </div>
 
-        <%= form_with model: @new_guest, url: add_guest_admin_bunk_list_path(@reservation_week), method: :post, local: true, authenticity_token: true do |form| %>
+        <%= form_tag add_guest_admin_bunk_list_path(@reservation_week), method: :post, data: { turbo: false }, local: true, id: "add-guest-form" do %>
               <div class="p-6 space-y-4">
                 <div>
-                  <%= form.label :name, class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Guest name" %>
+                  <label for="guest_name" class="block text-sm font-medium text-gray-700">Name</label>
+                  <%= text_field_tag "guest[name]", @new_guest&.name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Guest name" %>
                 </div>
 
                 <div>
-                  <%= form.label :sex, class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.select :sex,
-                      options_for_select([['Male', 'male'], ['Female', 'female']]),
-                      { prompt: 'Select gender' },
-                      { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
+                  <label for="guest_sex" class="block text-sm font-medium text-gray-700">Sex</label>
+                  <%= select_tag "guest[sex]",
+                      options_for_select([['Male', 'male'], ['Female', 'female']], @new_guest&.sex),
+                      { prompt: 'Select gender', class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
                 </div>
 
                 <div>
-                  <%= form.label :guest_type, class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.select :guest_type,
-                      options_for_select([['Family Guest', 'family'], ['Friend', 'friend'], ['Work Guest', 'work'], ['Other', 'other']]),
-                      { prompt: 'Select type' },
-                      { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
-                </div>
-
-                <div>
-                  <%= form.label :phone, class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.text_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Phone number" %>
-                </div>
-
-                <div>
-                  <%= form.label :email, class: "block text-sm font-medium text-gray-700" %>
-                  <%= form.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", placeholder: "Email address" %>
+                  <label for="guest_guest_type" class="block text-sm font-medium text-gray-700">Guest Type</label>
+                  <%= select_tag "guest[guest_type]",
+                      options_for_select([['Family Guest', 'family'], ['Friend', 'friend'], ['Work Guest', 'work'], ['Other', 'other']], @new_guest&.guest_type),
+                      { prompt: 'Select type', class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" } %>
                 </div>
 
                 <div class="pt-2">
-                  <%= form.submit "Add Guest", class: "w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-indigo-700" %>
+                  <%= submit_tag "Add Guest", class: "w-full inline-flex justify-center items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-indigo-700" %>
                 </div>
               </div>
             <% end %>
@@ -524,7 +512,50 @@
   .draggable-person.dragging {
     @apply opacity-50;
   }
+</style>
 
+<script>
+  // Reset the guest form when form_reset parameter is present
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('form_reset') === 'true') {
+      // Find the guest form by ID
+      const form = document.getElementById('add-guest-form');
+      
+      if (form) {
+        console.log('Found form, resetting...');
+        
+        // Reset the form
+        form.reset();
+        
+        // Manually clear select dropdowns to ensure they reset properly
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+          select.selectedIndex = 0;
+          console.log('Reset select:', select.name);
+        });
+        
+        // Clear text inputs to ensure they're empty
+        const textInputs = form.querySelectorAll('input[type="text"], input[type="email"]');
+        textInputs.forEach(input => {
+          input.value = '';
+          console.log('Cleared input:', input.name);
+        });
+        
+        // Clear the URL parameter to prevent reset on page refresh
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.delete('form_reset');
+        window.history.replaceState({}, '', newUrl);
+        
+        console.log('Form reset completed');
+      } else {
+        console.log('Guest form not found');
+      }
+    }
+  });
+</script>
+
+<style>
   .gender-mismatch {
     @apply border-red-400 bg-red-50;
   }

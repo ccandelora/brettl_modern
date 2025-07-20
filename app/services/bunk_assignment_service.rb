@@ -31,12 +31,12 @@ class BunkAssignmentService
     debug_log "Total bunks: #{bunks.size}"
 
     # First pass: Match owners to their bunks
-    # Get reservations from owners - match by ID or display_name only
+    # Consider member reservations and guest reservations where the guest is a member who owns a bunk
     owner_reservations = reservations.select do |res|
-      user = res.user
-      bunks.any? do |b|
-        b.owner_id == user.id ||
-        (b.owner && b.owner.display_name.to_s.downcase == user.display_name.to_s.downcase)
+      effective_user = res.effective_user
+      effective_user && bunks.any? do |b|
+        b.owner_id == effective_user.id ||
+        (b.owner && b.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
       end
     end
 
@@ -44,28 +44,28 @@ class BunkAssignmentService
 
     # Process owner assignments first - owners should ONLY get their owned bunks
     owner_reservations.each do |reservation|
-      user = reservation.user
+      effective_user = reservation.effective_user
       owned_bunks = bunks.select do |b|
-        b.owner_id == user.id ||
-        (b.owner && b.owner.display_name.to_s.downcase == user.display_name.to_s.downcase)
+        b.owner_id == effective_user.id ||
+        (b.owner && b.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
       end
 
-      debug_log "Processing owner #{user.display_name} (ID: #{user.id}) who owns bunks: #{owned_bunks.map { |b| "#{b.name} (owner: #{b.owner&.display_name})" }.join(', ')}"
+      debug_log "Processing owner #{effective_user.display_name} (ID: #{effective_user.id}) who owns bunks: #{owned_bunks.map { |b| "#{b.name} (owner: #{b.owner&.display_name})" }.join(', ')}"
 
       assigned = false
       owned_bunks.each do |bunk|
-        debug_log "  Checking bunk #{bunk.name} - Owner ID match: #{bunk.owner_id == user.id}, Name match: #{bunk.owner&.display_name.to_s.downcase == user.display_name.to_s.downcase}"
+        debug_log "  Checking bunk #{bunk.name} - Owner ID match: #{bunk.owner_id == effective_user.id}, Name match: #{bunk.owner&.display_name.to_s.downcase == effective_user.display_name.to_s.downcase}"
         if !@assigned_bunk_ids.include?(bunk.id) && gender_compatible?(reservation, bunk)
           create_assignment(reservation, bunk)
-          debug_log "✓ Assigned owner #{user.display_name} to their owned bunk #{bunk.name}"
+          debug_log "✓ Assigned owner #{effective_user.display_name} to their owned bunk #{bunk.name}"
           assigned = true
           break  # Stop after first successful assignment
         else
-          debug_log "Cannot assign #{user.display_name} to their bunk #{bunk.name} - already assigned or gender mismatch"
+          debug_log "Cannot assign #{effective_user.display_name} to their bunk #{bunk.name} - already assigned or gender mismatch"
         end
       end
       unless assigned
-        debug_log "Owner #{user.display_name} could not be assigned to any of their owned bunks. Will not assign to open bunks."
+        debug_log "Owner #{effective_user.display_name} could not be assigned to any of their owned bunks. Will not assign to open bunks."
       end
     end
 
