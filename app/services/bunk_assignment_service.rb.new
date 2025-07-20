@@ -1,0 +1,130 @@
+class BunkAssignmentService
+  def initialize(reservation_week)
+    @reservation_week = reservation_week
+    @assignments = []  # Track assignments before saving
+    @debug = true
+  end
+
+  def generate_assignments
+    debug_log "Starting bunk assignment generation for week of #{@reservation_week.res_date}"
+
+    # Clear existing assignments
+    @reservation_week.bunk_assignments.destroy_all
+
+    # Get all reservations and bunks
+    reservations = @reservation_week.reservations.includes(:user)
+    bunks = Bunk.includes(:room, :owner).joins(:room).order('rooms.order ASC, bunks.order ASC')
+
+    debug_log "Total reservations: #{reservations.size}"
+    debug_log "Total bunks: #{bunks.size}"
+
+    # First pass: Match owners to their bunks
+    reservations.each do |reservation|
+      user = reservation.user
+      owned_bunks = bunks.select { |b| b.owner_id == user.id }
+
+      if owned_bunks.any?
+        debug_log "Processing owner #{user.display_name} who owns bunks: #{owned_bunks.map(&:name).join(', ')}"
+
+        # Try to assign them to one of their owned bunks
+        compatible_owned_bunk = owned_bunks.find do |bunk|
+          !bunk_assigned?(bunk) && gender_compatible?(reservation, bunk)
+        end
+
+        if compatible_owned_bunk
+          record_assignment(reservation, compatible_owned_bunk)
+          debug_log "✓ Assigned owner #{user.display_name} to their bunk #{compatible_owned_bunk.name}"
+        else
+          debug_log "✗ Could not assign #{user.display_name} to any of their owned bunks"
+        end
+      end
+    end
+
+    # Second pass: Handle all remaining reservations
+    unassigned_reservations = reservations.reject { |r| assignable_assigned?(r) }
+    debug_log "\nProcessing #{unassigned_reservations.size} unassigned reservations"
+
+    unassigned_reservations.each do |reservation|
+      available_bunks = bunks.select { |b| !bunk_assigned?(b) && gender_compatible?(reservation, b) }
+      available_bunks = sort_bunks_by_preference(available_bunks)
+
+      if bunk = available_bunks.first
+        record_assignment(reservation, bunk)
+        debug_log "Assigned #{reservation.user.display_name} to #{bunk.name}"
+      else
+        debug_log "Could not find a bunk for #{reservation.user.display_name}"
+      end
+    end
+
+    # Final pass: Handle guests
+    guests = @reservation_week.guests
+    debug_log "\nProcessing #{guests.size} guests"
+
+    guests.each do |guest|
+      available_bunks = bunks.select { |b| !bunk_assigned?(b) && gender_compatible?(guest, b) }
+      available_bunks = sort_bunks_by_preference(available_bunks)
+
+      if bunk = available_bunks.first
+        record_assignment(guest, bunk)
+        debug_log "Assigned guest #{guest.name} to #{bunk.name}"
+      else
+        debug_log "Could not find a bunk for guest #{guest.name}"
+      end
+    end
+
+    # Save all assignments
+    save_assignments
+    debug_log "\nAssignment complete. Total assignments: #{@assignments.size}"
+  end
+
+  private
+
+  def gender_compatible?(assignable, bunk)
+    room_gender = bunk.room.gender
+    assignable_gender = assignable.sex&.downcase
+
+    case room_gender
+    when 'men'
+      assignable_gender == 'male'
+    when 'women'
+      assignable_gender == 'female'
+    when 'coed'
+      true
+    else
+      false
+    end
+  end
+
+  def bunk_assigned?(bunk)
+    @assignments.any? { |a| a[:bunk] == bunk }
+  end
+
+  def assignable_assigned?(assignable)
+    @assignments.any? { |a| a[:assignable] == assignable }
+  end
+
+  def record_assignment(assignable, bunk)
+    @assignments << { assignable: assignable, bunk: bunk }
+  end
+
+  def save_assignments
+    @assignments.each do |assignment|
+      BunkAssignment.create!(
+        reservation_week: @reservation_week,
+        assignable: assignment[:assignable],
+        bunk: assignment[:bunk]
+      )
+    end
+  end
+
+  def sort_bunks_by_preference(bunks)
+    # Prefer open bunks over owned bunks
+    bunks.sort_by do |bunk|
+      [bunk.owner_id.present? ? 1 : 0, bunk.room.order, bunk.order]
+    end
+  end
+
+  def debug_log(message)
+    Rails.logger.info("BunkAssignment: #{message}") if @debug
+  end
+end

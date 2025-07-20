@@ -16,7 +16,7 @@
         <!-- Main Navigation -->
         <div class="flex items-center space-x-8">
           <%= link_to "Home", root_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors" %>
-          
+
           <!-- Info & Resources Dropdown -->
           <div class="relative" data-controller="dropdown">
             <button data-action="click->dropdown#toggle" class="flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors">
@@ -52,11 +52,11 @@
                 <% if current_user.admin? %>
                   <hr class="my-1">
                   <div class="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Admin</div>
-                  <%= link_to "Bunk Lists", bunk_lists_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
+                  <%= link_to "Bunk Lists", admin_bunk_lists_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50" %>
                 <% end %>
               </div>
             </div>
-            
+
             <!-- Renew Membership Link -->
             <%= link_to "Renew Membership", 'https://docs.google.com/forms/d/e/1FAIpQLSes0Q-3dkORhUp-Y8GcvbgzOOuGkJyeRDraTWGc9mtOUQYr5Q/viewform?embedded=true&pli=1', class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors", target: "_blank" %>
           <% end %>
@@ -119,7 +119,7 @@
     <div data-mobile-menu-target="menu" class="hidden lg:hidden mt-4 pb-4 border-t border-gray-200 pt-4">
       <div class="flex flex-col space-y-1">
         <%= link_to "Home", root_path, class: "px-3 py-2 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
-        
+
         <!-- Info & Resources Section -->
         <div class="px-3 py-2">
           <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Info & Resources</div>
@@ -131,7 +131,7 @@
             <%= link_to "Volleyball", volleyball_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
           </div>
         </div>
-        
+
         <% if user_signed_in? %>
           <!-- Reservations Section -->
           <div class="px-3 py-2">
@@ -142,7 +142,7 @@
               <%= link_to "Renew Membership", 'https://docs.google.com/forms/d/e/1FAIpQLSes0Q-3dkORhUp-Y8GcvbgzOOuGkJyeRDraTWGc9mtOUQYr5Q/viewform?embedded=true&pli=1', class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors", target: "_blank" %>
               <% if current_user.admin? %>
                 <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-3 mb-2">Admin</div>
-                <%= link_to "Bunk Lists", bunk_lists_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
+                <%= link_to "Bunk Lists", admin_bunk_lists_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
               <% end %>
             </div>
           </div>
@@ -162,16 +162,16 @@
                 <div class="text-xs text-gray-500"><%= current_user.email %></div>
               </div>
             </div>
-            
+
             <div class="space-y-1 pl-3">
               <%= link_to "My Profile", profile_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
-              
+
               <% if current_user.admin? %>
                 <div class="text-xs font-semibold text-gray-500 uppercase tracking-wide mt-3 mb-2">Admin</div>
                 <%= link_to "Admin Dashboard", admin_root_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
                 <%= link_to "Manage Users", admin_users_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
               <% end %>
-              
+
               <%= button_to "Sign Out", destroy_user_session_path, method: :delete, class: "w-full text-left block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors border-0 bg-transparent mt-2" %>
             </div>
           </div>
@@ -183,4 +183,4 @@
       </div>
     </div>
   </nav>
-</header> 
+</header>

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     resources :users
 
     # Master Bunk List Management
-    resources :master_bunk_list, only: [:index] do
+    resources :master_bunk_list, only: [ :index ] do
       collection do
         post :import_from_html
         patch :bulk_update
@@ -28,15 +28,15 @@ Rails.application.routes.draw do
         patch :update_bunk
       end
     end
-  end
 
-  # Bunk Lists - Admin only
-  resources :bunk_lists, only: [:index, :show, :edit, :update, :destroy] do
-    member do
-      post :generate
-      get :print
-      post :finalize_and_email
-      post :add_guest
+    # Bunk Lists Management
+    resources :bunk_lists, only: [ :index, :show, :edit, :update, :destroy ] do
+      member do
+        post :generate
+        get :print
+        post :finalize_and_email
+        post :add_guest
+      end
     end
   end
 

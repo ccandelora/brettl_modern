@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Guest Bunk Assignment</h1>
+
+    <p>Guest bunk assignment for the week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %> has been finalized.</p>
+
+    <h2>Guest Details:</h2>
+    <table>
+      <tr>
+        <th align="left">Name:</th>
+        <td><%= @guest.name %></td>
+      </tr>
+      <tr>
+        <th align="left">Room:</th>
+        <td><%= @room.name %></td>
+      </tr>
+      <tr>
+        <th align="left">Bunk:</th>
+        <td><%= @bunk.name %></td>
+      </tr>
+      <tr>
+        <th align="left">Type:</th>
+        <td><%= @bunk.bunk_type %></td>
+      </tr>
+    </table>
+
+    <p><em>This is a notification for your records. The guest should be informed of their assignment separately.</em></p>
+
+    <p>
+      Best regards,<br>
+      The Brettl-Hupfers System
+    </p>
+  </body>
+</html>

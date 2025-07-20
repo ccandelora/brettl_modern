@@ -1,10 +1,11 @@
-<% content_for :title, "Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
+<% content_for :title, "Bunk List - Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
 
-<div class="header">
+<div class="print-container">
+  <div class="header">
   <h1>Brettl-Hupfers Ski Club</h1>
   <h2>Bunk List - Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %></h2>
   <% if @reservation_week.note.present? %>
-    <p><strong>Week Note:</strong> <%= @reservation_week.note %></p>
+    <p><%= @reservation_week.note %></p>
   <% end %>
 </div>
 
@@ -12,7 +13,7 @@
 
 <% @women_rooms.each do |room| %>
   <div class="room-title"><%= room.name %></div>
-  
+
   <table>
     <thead>
       <tr>
@@ -29,7 +30,9 @@
           <td><%= bunk.name %></td>
           <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
           <td>
-            <%= assignment ? assignment.reservation.name : "" %>
+            <% if assignment %>
+              <%= assignment.assignable_name %>
+            <% end %>
           </td>
           <td><%= bunk.bunk_type %></td>
         </tr>
@@ -42,7 +45,7 @@
 
 <% @men_rooms.each do |room| %>
   <div class="room-title"><%= room.name %></div>
-  
+
   <table>
     <thead>
       <tr>
@@ -78,7 +81,7 @@
 
   <% @coed_rooms.each do |room| %>
     <div class="room-title"><%= room.name %></div>
-    
+
     <table>
       <thead>
         <tr>
@@ -110,54 +113,8 @@
   <% end %>
 <% end %>
 
-<div class="summary">
-  <h3>Summary</h3>
-  <table style="width: 50%;">
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Total</th>
-        <th>Occupied</th>
-        <th>Open</th>
-        <th>Owned</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><strong>Female Bunks</strong></td>
-        <td><%= @stats[:women][:total] %></td>
-        <td><%= @stats[:women][:occupied] %></td>
-        <td><%= @stats[:women][:open] %></td>
-        <td><%= @stats[:women][:owned] %></td>
-      </tr>
-      <tr>
-        <td><strong>Male Bunks</strong></td>
-        <td><%= @stats[:men][:total] %></td>
-        <td><%= @stats[:men][:occupied] %></td>
-        <td><%= @stats[:men][:open] %></td>
-        <td><%= @stats[:men][:owned] %></td>
-      </tr>
-      <% if @coed_rooms.any? %>
-        <tr>
-          <td><strong>Coed Bunks</strong></td>
-          <td><%= @stats[:coed][:total] %></td>
-          <td><%= @stats[:coed][:occupied] %></td>
-          <td><%= @stats[:coed][:open] %></td>
-          <td><%= @stats[:coed][:owned] %></td>
-        </tr>
-      <% end %>
-      <tr style="border-top: 2px solid #333;">
-        <td><strong>Total Bunks</strong></td>
-        <td><%= @stats[:total][:total] %></td>
-        <td><%= @stats[:total][:occupied] %></td>
-        <td><%= @stats[:total][:total] - @stats[:total][:occupied] %></td>
-        <td><%= @stats[:women][:owned] + @stats[:men][:owned] + (@stats[:coed] ? @stats[:coed][:owned] : 0) %></td>
-      </tr>
-    </tbody>
-  </table>
-  
   <div style="margin-top: 20px;">
     <p><strong>Generated:</strong> <%= Time.current.strftime('%B %d, %Y at %I:%M %p') %></p>
     <p><strong>Total Reservations:</strong> <%= @reservation_week.reservations.count %></p>
   </div>
-</div> 
+</div>

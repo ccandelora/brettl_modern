@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Your Bunk Assignment</h1>
+
+    <p>Your bunk assignment for the week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %> has been finalized.</p>
+
+    <h2>Assignment Details:</h2>
+    <table>
+      <tr>
+        <th align="left">Room:</th>
+        <td><%= @room.name %></td>
+      </tr>
+      <tr>
+        <th align="left">Bunk:</th>
+        <td><%= @bunk.name %></td>
+      </tr>
+      <tr>
+        <th align="left">Type:</th>
+        <td><%= @bunk.bunk_type %></td>
+      </tr>
+    </table>
+
+    <p><strong>Please note:</strong> This assignment is now final. If you need to make any changes, please contact the club administrators.</p>
+
+    <p>Thank you for being a member of Brettl-Hupfers Ski Club!</p>
+
+    <p>
+      Best regards,<br>
+      The Brettl-Hupfers Team
+    </p>
+  </body>
+</html>
