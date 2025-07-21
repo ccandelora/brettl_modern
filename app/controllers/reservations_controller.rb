@@ -44,18 +44,24 @@ class ReservationsController < ApplicationController
 
     @reservation = @reservation_week.reservations.new(reservation_params)
 
-    # Handle different reservation types
+    # Handle different reservation types and auto-populate fields
     case @reservation.reservation_type
     when "myself"
       # Reservation for the current user
       @reservation.user = current_user
       @reservation.name = current_user.name if @reservation.name.blank?
+      # Auto-populate from current user's profile
+      @reservation.sex = current_user.sex if @reservation.sex.blank?
+      @reservation.res_member_type = current_user.membership_type if @reservation.res_member_type.blank?
     when "other_member"
       # Reservation for another member - assign to their account
       if @reservation.other_member_id.present?
         other_member = User.find(@reservation.other_member_id)
         @reservation.user = other_member
         @reservation.name = other_member.name if @reservation.name.blank?
+        # Auto-populate from other member's profile
+        @reservation.sex = other_member.sex if @reservation.sex.blank?
+        @reservation.res_member_type = other_member.membership_type if @reservation.res_member_type.blank?
       else
         @reservation.errors.add(:other_member_id, "must be selected")
         render :new and return
@@ -63,6 +69,8 @@ class ReservationsController < ApplicationController
     when "guest"
       # Guest reservation - stays with current user but with guest name
       @reservation.user = current_user
+      # For guests, auto-set membership type to "Guest"
+      @reservation.res_member_type = "Guest" if @reservation.res_member_type.blank?
       # guest_user_id can be used to link to a member if needed
     end
 

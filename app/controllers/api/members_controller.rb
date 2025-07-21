@@ -7,7 +7,9 @@ class Api::MembersController < ApplicationController
         id: user.id,
         display_name: user.display_name,
         name: user.name,
-        email: user.email
+        email: user.email,
+        sex: user.sex,
+        membership_type: user.membership_type
       }
     end
 

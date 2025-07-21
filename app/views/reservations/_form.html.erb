@@ -11,7 +11,11 @@
   <% end %>
 
   <!-- Hidden fields -->
-  <%= hidden_field_tag "reservation[user_id]", current_user.id, data: { user_name: current_user.name } %>
+  <%= hidden_field_tag "reservation[user_id]", current_user.id, data: { 
+    user_name: current_user.name,
+    user_sex: current_user.sex,
+    user_membership_type: current_user.membership_type
+  } %>
   <%= hidden_field_tag "reservation[reservation_week_id]", @reservation_week.id %>
   <%= hidden_field_tag "reservation[reservation_date]", Date.current %>
 
