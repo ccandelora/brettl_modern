@@ -170,28 +170,28 @@
             <table class="min-w-full divide-y divide-gray-200">
               <thead class="bg-gray-50">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                     User
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                     Sex
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Membership
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Account Type
+                  <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                    Type
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                     Status
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Reservations
+                  <th class="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+                    Res.
                   </th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Last Sign In
                   </th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th class="px-2 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                     Actions
                   </th>
                 </tr>
@@ -199,77 +199,80 @@
               <tbody class="bg-white divide-y divide-gray-200">
                 <% @users.each do |user| %>
                   <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-3 py-2 whitespace-nowrap">
                       <div class="flex items-center">
-                        <div class="flex-shrink-0 h-10 w-10">
-                          <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                            <span class="text-sm font-medium text-gray-700">
+                        <div class="flex-shrink-0 h-8 w-8">
+                          <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <span class="text-xs font-medium text-gray-700">
                               <%= user.name.present? ? user.name.first.upcase : user.email.first.upcase %>
                             </span>
                           </div>
                         </div>
-                        <div class="ml-4">
-                          <div class="text-sm font-medium text-gray-900">
+                        <div class="ml-2 min-w-0 flex-1">
+                          <div class="text-sm font-medium text-gray-900 truncate">
                             <%= user.name.present? ? user.name : "No name" %>
                           </div>
-                          <div class="text-sm text-gray-500">
+                          <div class="text-xs text-gray-500 truncate">
                             <%= user.email %>
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900">
                       <%= user.sex %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 truncate">
                       <%= user.membership_type %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-2 py-2 whitespace-nowrap">
                       <% if user.admin? %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          Administrator
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                          Admin
                         </span>
                       <% else %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                           Member
                         </span>
                       <% end %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-2 py-2 whitespace-nowrap">
                       <% if user.confirmed? %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          Confirmed
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          ✓
                         </span>
                       <% else %>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          Unconfirmed
+                        <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                          ⚠
                         </span>
                       <% end %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 text-center">
                       <%= user.reservations.count %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-500 truncate">
                       <% if user.last_sign_in_at.present? %>
                         <%= time_ago_in_words(user.last_sign_in_at) %> ago
                       <% else %>
                         Never
                       <% end %>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div class="flex justify-end space-x-2">
-                        <%= link_to "View", 
+                    <td class="px-2 py-2 whitespace-nowrap text-right text-xs font-medium">
+                      <div class="flex justify-end space-x-1">
+                        <%= link_to "👁", 
                             admin_user_path(user), 
-                            class: "text-indigo-600 hover:text-indigo-900" %>
-                        <%= link_to "Edit", 
+                            class: "text-indigo-600 hover:text-indigo-900",
+                            title: "View #{user.name || user.email}" %>
+                        <%= link_to "✏️", 
                             edit_admin_user_path(user), 
-                            class: "text-gray-600 hover:text-gray-900" %>
+                            class: "text-gray-600 hover:text-gray-900",
+                            title: "Edit #{user.name || user.email}" %>
                         <% unless user == current_user %>
-                          <%= button_to "Delete", 
+                          <%= button_to "🗑", 
                               admin_user_path(user), 
                               method: :delete, 
                               form_class: "inline-block",
                               class: "text-red-600 hover:text-red-900",
+                              title: "Delete #{user.name || user.email}",
                               data: { turbo_confirm: "Are you sure you want to delete this user? This action cannot be undone." } %>
                         <% end %>
                       </div>
