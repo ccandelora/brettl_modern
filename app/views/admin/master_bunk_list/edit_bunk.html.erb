@@ -1,0 +1,84 @@
+<% content_for :title, "Edit Bunk - #{@bunk.name}" %>
+
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Edit Bunk <%= @bunk.name %></h1>
+          <p class="mt-1 text-sm text-gray-600">
+            <%= @bunk.room.name %> - <%= @bunk.room.gender.capitalize %>'s Room
+          </p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+          <%= link_to "← Back to Master List", admin_master_bunk_list_index_path, 
+              class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="bg-white shadow-sm rounded-lg p-6">
+      <%= form_with model: @bunk, url: update_bunk_admin_master_bunk_list_path(@bunk), method: :patch, local: true do |form| %>
+        <div class="space-y-6">
+          
+          <!-- Bunk Name -->
+          <div>
+            <%= form.label :name, "Bunk Name", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+            <% if @bunk.errors[:name].any? %>
+              <p class="mt-2 text-sm text-red-600"><%= @bunk.errors[:name].first %></p>
+            <% end %>
+          </div>
+
+          <!-- Bunk Type -->
+          <div>
+            <%= form.label :bunk_type, "Bunk Type", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :bunk_type, 
+                options_for_select([['Lower', 'Lower'], ['Upper', 'Upper'], ['Single', 'Single']], @bunk.bunk_type),
+                {},
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+            <% if @bunk.errors[:bunk_type].any? %>
+              <p class="mt-2 text-sm text-red-600"><%= @bunk.errors[:bunk_type].first %></p>
+            <% end %>
+          </div>
+
+          <!-- Owner -->
+          <div>
+            <%= form.label :owner_id, "Owner", class: "block text-sm font-medium text-gray-700" %>
+            <%= form.select :owner_id, 
+                options_from_collection_for_select(@users, :id, :display_name, @bunk.owner_id),
+                { include_blank: "Open (No Owner)" },
+                { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+            <% if @bunk.errors[:owner_id].any? %>
+              <p class="mt-2 text-sm text-red-600"><%= @bunk.errors[:owner_id].first %></p>
+            <% end %>
+          </div>
+
+          <!-- Current Status -->
+          <div class="bg-gray-50 rounded-lg p-4">
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Current Status</h3>
+            <div class="space-y-2 text-sm text-gray-600">
+              <div><strong>Room:</strong> <%= @bunk.room.name %> (<%= @bunk.room.gender.capitalize %>'s Room)</div>
+              <div><strong>Current Owner:</strong> <%= @bunk.owner ? @bunk.owner.display_name : "Open" %></div>
+              <div><strong>Status:</strong> 
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= @bunk.owned? ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' %>">
+                  <%= @bunk.owned? ? 'Owned' : 'Open' %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex justify-end space-x-3">
+            <%= link_to "Cancel", admin_master_bunk_list_index_path, 
+                class: "inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" %>
+            <%= form.submit "Update Bunk", 
+                class: "inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div> 

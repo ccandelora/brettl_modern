@@ -10,17 +10,29 @@ Rails.application.configure do
     policy.font_src    :self, :https, :data
     policy.img_src     :self, :https, :data, :blob, "https://*.fbcdn.net", "https://*.facebook.com"
     policy.object_src  :none
-    policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :unsafe_inline
-    policy.style_src   :self, :https, :unsafe_inline
+
+    if Rails.env.development?
+      # More permissive CSP for development
+      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :unsafe_inline
+      policy.style_src   :self, :https, :unsafe_inline
+    else
+      # Stricter CSP for production with nonces
+      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval
+      policy.style_src   :self, :https
+    end
+
     policy.connect_src :self, :https, "https://connect.facebook.net", "https://facebook.com", "https://www.facebook.com"
     policy.frame_src   :self, :https, "https://www.facebook.com", "https://web.facebook.com"
     # Specify URI for violation reports
     # policy.report_uri "/csp-violation-report-endpoint"
   end
 
-  # Generate session nonces for permitted importmap, inline scripts, and inline styles.
-  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
-  config.content_security_policy_nonce_directives = %w(script-src style-src)
+  # Only use nonces in production for better security
+  if Rails.env.production?
+    # Generate session nonces for permitted importmap, inline scripts, and inline styles.
+    config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+    config.content_security_policy_nonce_directives = %w(script-src style-src)
+  end
 
   # Report violations without enforcing the policy.
   # config.content_security_policy_report_only = true

@@ -86,6 +86,50 @@
                   </p>
                 </div>
               </div>
+
+              <!-- Sex Field -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :sex, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Sex
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.select :sex, 
+                      options_for_select([
+                        ['Male', 'Male'],
+                        ['Female', 'Female'],
+                        ['Other', 'Other']
+                      ], @user.sex),
+                      {},
+                      class: "max-w-lg block focus:ring-red-500 focus:border-red-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md" %>
+                  <% if @user.errors[:sex].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:sex].first %></p>
+                  <% end %>
+                </div>
+              </div>
+
+              <!-- Membership Type Field -->
+              <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
+                <%= form.label :membership_type, class: "block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" do %>
+                  Membership Type
+                <% end %>
+                <div class="mt-1 sm:mt-0 sm:col-span-2">
+                  <%= form.select :membership_type, 
+                      options_for_select([
+                        ['Full Member', 'Full Member'],
+                        ['Associate Member', 'Associate Member'],
+                        ['Social Member', 'Social Member'],
+                        ['Guest', 'Guest']
+                      ], @user.membership_type),
+                      {},
+                      class: "max-w-lg block focus:ring-red-500 focus:border-red-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md" %>
+                  <% if @user.errors[:membership_type].any? %>
+                    <p class="mt-2 text-sm text-red-600"><%= @user.errors[:membership_type].first %></p>
+                  <% end %>
+                  <p class="mt-2 text-sm text-gray-500">
+                    This will be auto-populated in reservation forms.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 

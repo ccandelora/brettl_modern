@@ -1,0 +1,137 @@
+<% content_for :title, "Bunk List - Week of #{@reservation_week.res_date.strftime('%B %d, %Y')}" %>
+
+<div class="print-container">
+  <div class="header">
+    <h1>Brettl-Hupfers Ski Club</h1>
+    <h2>Bunk List - Week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %></h2>
+    <% if @reservation_week.note.present? %>
+      <p><%= @reservation_week.note %></p>
+    <% end %>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Left Column: Women's Rooms -->
+    <div class="column column-left">
+      <div class="section-title">Women's Rooms</div>
+      
+      <% @women_rooms.each do |room| %>
+        <div class="room-title"><%= room.name %></div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Bunk</th>
+              <th>Owner</th>
+              <th>Occupant</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% room.bunks.ordered.each do |bunk| %>
+              <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+              <tr>
+                <td><%= bunk.name %></td>
+                <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+                <td>
+                  <% if assignment %>
+                    <%= assignment.assignable.effective_name %>
+                    <% if assignment.assignable_type == 'Guest' %>
+                      (G)
+                    <% end %>
+                  <% end %>
+                </td>
+                <td><%= bunk.bunk_type %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+
+    <!-- Right Column: Men's Rooms -->
+    <div class="column column-right">
+      <div class="section-title">Men's Rooms</div>
+      
+      <% @men_rooms.each do |room| %>
+        <div class="room-title"><%= room.name %></div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Bunk</th>
+              <th>Owner</th>
+              <th>Occupant</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% room.bunks.ordered.each do |bunk| %>
+              <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+              <tr>
+                <td><%= bunk.name %></td>
+                <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+                <td>
+                  <% if assignment %>
+                    <%= assignment.assignable.effective_name %>
+                    <% if assignment.assignable_type == 'Guest' %>
+                      (G)
+                    <% end %>
+                  <% end %>
+                </td>
+                <td><%= bunk.bunk_type %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Coed Rooms: Full width at bottom if any exist -->
+  <% if @coed_rooms.any? %>
+    <div class="full-width-section">
+      <div class="section-title">Coed Rooms</div>
+      
+      <% @coed_rooms.each do |room| %>
+        <div class="room-title"><%= room.name %></div>
+        
+        <table>
+          <thead>
+            <tr>
+              <th>Bunk</th>
+              <th>Owner</th>
+              <th>Occupant</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% room.bunks.ordered.each do |bunk| %>
+              <% assignment = @bunk_assignments.find { |ba| ba.bunk_id == bunk.id } %>
+              <tr>
+                <td><%= bunk.name %></td>
+                <td><%= bunk.owner ? bunk.owner.display_name : "Open" %></td>
+                <td>
+                  <% if assignment %>
+                    <%= assignment.assignable.effective_name %>
+                    <% if assignment.assignable_type == 'Guest' %>
+                      (G)
+                    <% end %>
+                  <% end %>
+                </td>
+                <td><%= bunk.bunk_type %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Footer Information -->
+  <div class="footer-info">
+    <p><strong>Generated:</strong> <%= Time.current.strftime('%m/%d/%Y %I:%M%p') %></p>
+    <p><strong>Reservations:</strong> <%= @reservation_week.reservations.count %></p>
+    <p><strong>Guests:</strong> <%= @reservation_week.guests.count %></p>
+    <p><strong>Legend:</strong> (G) = Guest</p>
+  </div>
+</div>

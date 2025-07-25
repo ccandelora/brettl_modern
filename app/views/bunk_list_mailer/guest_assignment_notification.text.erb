@@ -1,0 +1,12 @@
+Guest bunk assignment for the week of <%= @reservation_week.res_date.strftime('%B %d, %Y') %> has been finalized.
+
+Guest Details:
+Name: <%= @guest.name %>
+Room: <%= @room.name %>
+Bunk: <%= @bunk.name %>
+Bunk Type: <%= @bunk.bunk_type %>
+
+This is a notification for your records. The guest should be informed of their assignment separately.
+
+Best regards,
+The Brettl-Hupfers System

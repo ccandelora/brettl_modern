@@ -16,6 +16,28 @@ Rails.application.routes.draw do
   namespace :admin do
     root "dashboard#index"
     resources :users
+
+    # Master Bunk List Management
+    resources :master_bunk_list, only: [ :index ] do
+      collection do
+        post :import_from_html
+        patch :bulk_update
+      end
+      member do
+        get :edit_bunk
+        patch :update_bunk
+      end
+    end
+
+    # Bunk Lists Management
+    resources :bunk_lists, only: [ :index, :show, :edit, :update, :destroy ] do
+      member do
+        post :generate
+        get :print
+        post :finalize_and_email
+        post :add_guest
+      end
+    end
   end
 
   # Profile routes - only show and edit, users can only edit their own profile
@@ -62,6 +84,11 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+
+  # API routes
+  namespace :api do
+    get "members", to: "members#index"
+  end
 
   # Defines the root path route ("/")
 end

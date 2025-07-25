@@ -9,6 +9,15 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def ensure_admin!
+    unless current_user&.admin?
+      flash[:alert] = "You are not authorized to perform this action."
+      redirect_to root_path
+    end
+  end
+
+  protected
+
   # Check if reservations can be made for a given week
   # Reservations cannot be made for current week after Wednesday midnight Eastern
   def can_make_reservation_for_week?(week_start_date)
