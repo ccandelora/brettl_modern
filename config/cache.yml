@@ -12,5 +12,6 @@ test:
   <<: *default
 
 production:
-  database: cache
+  # Use main database instead of separate cache database
+  # database: cache
   <<: *default
