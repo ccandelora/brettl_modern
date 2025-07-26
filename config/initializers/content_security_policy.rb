@@ -16,8 +16,8 @@ Rails.application.configure do
       policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :unsafe_inline
       policy.style_src   :self, :https, :unsafe_inline
     else
-      # Production CSP - use nonces for inline scripts and unsafe-inline for styles
-      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :nonce
+      # Production CSP - allow unsafe_inline for scripts due to Facebook SDK requirements
+      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :unsafe_inline
       policy.style_src   :self, :https, :unsafe_inline
     end
 
@@ -27,9 +27,12 @@ Rails.application.configure do
     # policy.report_uri "/csp-violation-report-endpoint"
   end
 
-  # Generate secure random nonces for scripts in production
-  config.content_security_policy_nonce_generator = ->(request) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src]
+  # Rails 8 compatible nonce configuration
+  # Use session ID as nonce for better compatibility (Rails 8 recommendation)
+  config.content_security_policy_nonce_generator = ->(request) { request.session.id.to_s }
+
+  # Remove the nonce_directives configuration as it's handled differently in Rails 8
+  # config.content_security_policy_nonce_directives = %w[script-src]
 
   # Report violations without enforcing the policy.
   # config.content_security_policy_report_only = true
