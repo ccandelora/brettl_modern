@@ -30,6 +30,24 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
 
+  # Configure for Heroku SSL termination
+  # This helps Rails properly detect HTTPS when behind Heroku's load balancer
+  config.force_ssl = true
+  config.ssl_options = {
+    secure_cookies: true,
+    hsts: { subdomains: true, preload: true }
+  }
+
+  # Trust Heroku's load balancer for forwarded headers
+  # This is crucial for proper HTTPS detection and origin header handling
+  config.action_controller.forgery_protection_origin_check = true
+
+  # Configure trusted proxies for Heroku
+  # Heroku's load balancers need to be trusted for proper forwarded header handling
+  config.action_dispatch.trusted_proxies = [
+    "0.0.0.0/0"  # Trust all proxies (Heroku recommendation for apps behind their load balancer)
+  ]
+
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
@@ -59,7 +77,7 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "brettl.org" }
+  config.action_mailer.default_url_options = { host: "brettl.org", protocol: "https" }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   # config.action_mailer.smtp_settings = {

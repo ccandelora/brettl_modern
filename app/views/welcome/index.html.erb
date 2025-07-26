@@ -19,7 +19,7 @@
           <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">We Love The Outdoors!</h1>
           <p class="mt-6 text-lg leading-8 text-gray-600">The Brettl-Hupfers Ski & Sports Club is a group of people united by friendship and a love for skiing, snowboarding, hiking, canoeing, and other outdoor sports year round.</p>
           <div class="mt-10 flex items-center gap-x-6">
-            <a href="https://www.brettl.org/docs/BHSC_Member_Application.pdf" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Join Us</a>
+            <%= link_to "Join Us", "/docs/BHSC_Member_Application.pdf", class:"rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"%>
             <%= link_to "Read more", membership_path,  class:"whitespace-nowrap font-semibold  text-gray-900"%><span aria-hidden="true">→</span>
           </div>
         </div>
