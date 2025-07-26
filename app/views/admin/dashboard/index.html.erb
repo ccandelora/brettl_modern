@@ -59,7 +59,7 @@
             </div>
             <div class="ml-5 w-0 flex-1">
               <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">Current Week</dt>
+                <dt class="text-sm font-medium text-gray-500 truncate">Reservations for the Current Week</dt>
                 <dd class="text-2xl font-semibold text-gray-900"><%= @current_week_reservations %></dd>
                 <dd class="text-xs text-gray-500 mt-1">
                   <%= @current_week_start.strftime("%b %d, %Y") %>
@@ -132,7 +132,7 @@
           <%= link_to app_reservation_week_path(date: @current_week.res_date.strftime("%Y-%m-%d")), 
               class: "p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-center" do %>
             <i class="fas fa-calendar-day h-8 w-8 text-red-500 mx-auto mb-2"></i>
-            <h3 class="text-sm font-medium text-gray-900">Current Week</h3>
+            <h3 class="text-sm font-medium text-gray-900">Reservations for the Current Week</h3>
             <p class="text-xs text-gray-500 mt-1">View this week's reservations</p>
           <% end %>
         <% else %>
