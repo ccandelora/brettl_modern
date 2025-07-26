@@ -1,6 +1,6 @@
 class Reservation < ApplicationRecord
   belongs_to :user
-  belongs_to :reservation_week
+  belongs_to :reservation_week, counter_cache: true
   has_one :bunk_assignment, as: :assignable, dependent: :destroy
   has_one :assigned_bunk, through: :bunk_assignment, source: :bunk
 

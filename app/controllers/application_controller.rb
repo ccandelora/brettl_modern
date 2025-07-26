@@ -1,6 +1,9 @@
 class ApplicationController < ActionController::Base
   include Pundit::Authorization
 
+  # Protect against CSRF attacks
+  protect_from_forgery with: :exception
+
   # Allow broader browser support for better accessibility
   # Removed overly restrictive :modern requirement
 
