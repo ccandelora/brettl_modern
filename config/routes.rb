@@ -22,6 +22,8 @@ Rails.application.routes.draw do
       collection do
         post :import_from_html
         patch :bulk_update
+        post :add_preferred_member
+        delete :remove_preferred_member
       end
       member do
         get :edit_bunk

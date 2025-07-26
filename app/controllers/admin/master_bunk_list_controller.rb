@@ -3,7 +3,7 @@ class Admin::MasterBunkListController < ApplicationController
   before_action :ensure_admin!
 
   def index
-    @rooms = Room.includes(bunks: :owner).ordered
+    @rooms = Room.includes(bunks: [ :owner, :preferred_users ]).ordered
     @women_rooms = @rooms.women
     @men_rooms = @rooms.men
     @coed_rooms = @rooms.coed
@@ -26,6 +26,40 @@ class Admin::MasterBunkListController < ApplicationController
     end
   end
 
+  def add_preferred_member
+    @bunk = Bunk.find(params[:bunk_id])
+    @user = User.find(params[:user_id])
+
+    # Check gender compatibility
+    unless gender_compatible?(@user, @bunk)
+      redirect_to admin_master_bunk_list_index_path, alert: "#{@user.display_name} cannot be added as a preferred member for #{@bunk.name} due to gender restrictions."
+      return
+    end
+
+    if @bunk.add_preferred_user(@user)
+      redirect_to admin_master_bunk_list_index_path, notice: "#{@user.display_name} added as preferred member for #{@bunk.name}!"
+    else
+      redirect_to admin_master_bunk_list_index_path, alert: "#{@user.display_name} is already a preferred member for #{@bunk.name}."
+    end
+  rescue => e
+    Rails.logger.error "Error in add_preferred_member: #{e.message}"
+    redirect_to admin_master_bunk_list_index_path, alert: "Error adding preferred member: #{e.message}"
+  end
+
+  def remove_preferred_member
+    @bunk = Bunk.find(params[:bunk_id])
+    @user = User.find(params[:user_id])
+
+    if @bunk.remove_preferred_user(@user)
+      redirect_to admin_master_bunk_list_index_path, notice: "#{@user.display_name} removed from preferred members for #{@bunk.name}!"
+    else
+      redirect_to admin_master_bunk_list_index_path, alert: "Could not remove #{@user.display_name} from preferred members for #{@bunk.name}."
+    end
+  rescue => e
+    Rails.logger.error "Error in remove_preferred_member: #{e.message}"
+    redirect_to admin_master_bunk_list_index_path, alert: "Error removing preferred member: #{e.message}"
+  end
+
   def import_from_html
     # Re-import from HTML file
     if File.exist?(Rails.root.join("Bunk List Draft .html"))
@@ -37,8 +71,8 @@ class Admin::MasterBunkListController < ApplicationController
     end
   end
 
-        def bulk_update
-    # Handle bulk updates from the main page
+  def bulk_update
+    # Handle bulk updates from the main page (only for owners now)
     if params[:bunks]
       updated_count = 0
       errors = []
@@ -61,7 +95,7 @@ class Admin::MasterBunkListController < ApplicationController
       if errors.any?
         redirect_to admin_master_bunk_list_index_path, alert: "Some updates failed: #{errors.join('; ')}"
       else
-        redirect_to admin_master_bunk_list_index_path, notice: "#{updated_count} bunks updated successfully!"
+        redirect_to admin_master_bunk_list_index_path, notice: "#{updated_count} bunk owners updated successfully!"
       end
     else
       redirect_to admin_master_bunk_list_index_path, alert: "No updates to save."
@@ -74,8 +108,24 @@ class Admin::MasterBunkListController < ApplicationController
     redirect_to root_path, alert: "Access denied. Admin privileges required." unless current_user.admin?
   end
 
+  def gender_compatible?(user, bunk)
+    room_gender = bunk.room.gender&.downcase
+    user_sex = user.sex&.downcase
+
+    case room_gender
+    when "women"
+      user_sex == "female"
+    when "men"
+      user_sex == "male"
+    when "coed"
+      true # All genders allowed in coed rooms
+    else
+      true # Fallback - allow if room gender is not set
+    end
+  end
+
   def bunk_params
-    params.require(:bunk).permit(:name, :bunk_type, :owner_id)
+    params.require(:bunk).permit(:name, :bunk_type, :owner_id, :preferred_user_id)
   end
 
   def calculate_stats

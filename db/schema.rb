@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_000353) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_26_160427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -66,6 +66,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_000353) do
     t.index ["reservation_week_id"], name: "index_bunk_assignments_on_reservation_week_id"
   end
 
+  create_table "bunk_preferred_members", force: :cascade do |t|
+    t.bigint "bunk_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "rank", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bunk_id", "rank"], name: "index_bunk_preferred_members_on_bunk_and_rank"
+    t.index ["bunk_id", "rank"], name: "index_bunk_preferred_members_on_bunk_id_and_rank", unique: true
+    t.index ["bunk_id", "user_id"], name: "index_bunk_preferred_members_on_bunk_id_and_user_id", unique: true
+    t.index ["bunk_id"], name: "index_bunk_preferred_members_on_bunk_id"
+    t.index ["user_id"], name: "index_bunk_preferred_members_on_user_id"
+  end
+
   create_table "bunks", force: :cascade do |t|
     t.bigint "room_id", null: false
     t.bigint "owner_id"
@@ -74,9 +87,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_000353) do
     t.integer "order", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "preferred_user_id"
     t.index ["bunk_type"], name: "index_bunks_on_bunk_type"
     t.index ["order"], name: "index_bunks_on_order"
     t.index ["owner_id"], name: "index_bunks_on_owner_id"
+    t.index ["preferred_user_id"], name: "index_bunks_on_preferred_user_id"
     t.index ["room_id"], name: "index_bunks_on_room_id"
   end
 
@@ -132,6 +147,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_000353) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
     t.date "res_date"
+    t.integer "reservations_count", default: 0, null: false
+    t.index ["reservations_count"], name: "index_reservation_weeks_on_reservations_count"
   end
 
   create_table "reservations", id: :serial, force: :cascade do |t|
@@ -199,7 +216,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_000353) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bunk_assignments", "bunks"
   add_foreign_key "bunk_assignments", "reservation_weeks"
+  add_foreign_key "bunk_preferred_members", "bunks"
+  add_foreign_key "bunk_preferred_members", "users"
   add_foreign_key "bunks", "rooms"
   add_foreign_key "bunks", "users", column: "owner_id"
+  add_foreign_key "bunks", "users", column: "preferred_user_id"
   add_foreign_key "guests", "reservation_weeks"
 end

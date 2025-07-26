@@ -14,7 +14,7 @@ module Admin
       @total_reservations = Reservation.count
       @current_week_start = Date.current.beginning_of_week(:wednesday)
       @current_week = ReservationWeek.find_by(res_date: @current_week_start)
-      @current_week_reservations = @current_week ? @current_week.reservations.count : 0
+      @current_week_reservations = @current_week ? @current_week.reservations_count : 0
 
       # Recent Activity (last 30 days)
       @recent_reservations = Reservation.includes(:user, :reservation_week)
@@ -33,7 +33,7 @@ module Admin
         week = ReservationWeek.find_by(res_date: week_start)
         @weekly_stats << {
           week_start: week_start,
-          reservations: week ? week.reservations.count : 0,
+          reservations: week ? week.reservations_count : 0,
           week_name: week_start.strftime("%b %d")
         }
       end

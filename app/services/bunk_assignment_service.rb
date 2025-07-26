@@ -1,5 +1,25 @@
 require "set"
 
+# BunkAssignmentService handles the automated assignment of members and guests to bunks
+# for a given reservation week. The assignment follows these priority rules:
+#
+# 1. OWNERS FIRST: Bunk owners are always assigned to their owned bunks (if attending)
+# 2. PREFERRED MEMBERS: If a bunk's owner is not attending, preferred members are assigned
+#    in rank order (1st, 2nd, 3rd, etc.)
+# 3. GENERAL ASSIGNMENT: Remaining unassigned members/guests are assigned to available bunks
+#
+# SPECIAL CASE: OWNER ON PREFERRED LIST
+# When a bunk owner is also on another bunk's preferred list:
+# - If the owner is assigned to their own bunk, they stay there (owner priority)
+# - If the owner is NOT assigned to their own bunk, they can be assigned to the preferred bunk
+# - This prevents conflicts and ensures fair assignment
+#
+# Example:
+# - Bunk A is owned by John
+# - Bunk B has John as preferred member #1
+# - If John is assigned to Bunk A, he stays there
+# - If John is NOT assigned to Bunk A, he can be assigned to Bunk B as preferred member
+#
 class BunkAssignmentService
   def initialize(reservation_week)
     @reservation_week = reservation_week
@@ -18,60 +38,137 @@ class BunkAssignmentService
   public
 
   def generate_assignments
-    debug_log "Starting bunk assignment generation for week of #{@reservation_week.res_date}"
-
     # Clear existing assignments
     @reservation_week.bunk_assignments.destroy_all
+    @assigned_bunk_ids.clear
+    @assigned_assignable_ids.clear
 
-    # Get all reservations and bunks
-    reservations = @reservation_week.reservations.includes(:user)
-    bunks = Bunk.includes(:room, :owner).joins(:room).order("rooms.order ASC, bunks.order ASC")
-
-    debug_log "Total reservations: #{reservations.size}"
-    debug_log "Total bunks: #{bunks.size}"
-
-    # First pass: Match owners to their bunks
-    # Consider member reservations and guest reservations where the guest is a member who owns a bunk
+    # Step 1: Assign owners to their own bunks
     owner_reservations = reservations.select do |res|
       effective_user = res.effective_user
-      effective_user && bunks.any? do |b|
+      effective_name = res.effective_name
+
+      # Check if effective_user owns a bunk
+      user_owns_bunk = effective_user && bunks.any? do |b|
         b.owner_id == effective_user.id ||
         (b.owner && b.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
       end
+
+      # Check if effective_name owns a bunk (for guest reservations where effective_user is nil)
+      name_owns_bunk = effective_name && bunks.any? do |b|
+        b.owner && b.owner.display_name.to_s.downcase == effective_name.to_s.downcase
+      end
+
+      user_owns_bunk || name_owns_bunk
     end
 
-    debug_log "Found #{owner_reservations.size} owners with reservations"
-
-    # Process owner assignments first - owners should ONLY get their owned bunks
     owner_reservations.each do |reservation|
       effective_user = reservation.effective_user
-      owned_bunks = bunks.select do |b|
-        b.owner_id == effective_user.id ||
-        (b.owner && b.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
-      end
+      effective_name = reservation.effective_name
 
-      debug_log "Processing owner #{effective_user.display_name} (ID: #{effective_user.id}) who owns bunks: #{owned_bunks.map { |b| "#{b.name} (owner: #{b.owner&.display_name})" }.join(', ')}"
-
-      assigned = false
-      owned_bunks.each do |bunk|
-        debug_log "  Checking bunk #{bunk.name} - Owner ID match: #{bunk.owner_id == effective_user.id}, Name match: #{bunk.owner&.display_name.to_s.downcase == effective_user.display_name.to_s.downcase}"
-        if !@assigned_bunk_ids.include?(bunk.id) && gender_compatible?(reservation, bunk)
-          create_assignment(reservation, bunk)
-          debug_log "✓ Assigned owner #{effective_user.display_name} to their owned bunk #{bunk.name}"
-          assigned = true
-          break  # Stop after first successful assignment
+      # Find the bunk this person owns
+      owned_bunk = bunks.find do |b|
+        if effective_user
+          b.owner_id == effective_user.id ||
+          (b.owner && b.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
         else
-          debug_log "Cannot assign #{effective_user.display_name} to their bunk #{bunk.name} - already assigned or gender mismatch"
+          b.owner && b.owner.display_name.to_s.downcase == effective_name.to_s.downcase
         end
       end
-      unless assigned
-        debug_log "Owner #{effective_user.display_name} could not be assigned to any of their owned bunks. Will not assign to open bunks."
+
+      if owned_bunk && !@assigned_bunk_ids.include?(owned_bunk.id)
+        create_assignment(reservation, owned_bunk)
       end
     end
 
-    # Step 3: Handle remaining reservations and guests
-    remaining_reservations = reservations - owner_reservations
-    assign_non_owners(remaining_reservations + @reservation_week.guests, bunks)
+    # Step 2: Assign preferred members to bunks when owners are not attending
+    bunks_with_preferred = bunks.select { |b| b.preferred_users.any? }
+
+    bunks_with_preferred.each do |bunk|
+      # Check if the owner is attending
+      owner_attending = owner_reservations.any? do |owner_res|
+        owner_effective_user = owner_res.effective_user
+        owner_effective_name = owner_res.effective_name
+
+        # Check by effective_user (for member reservations)
+        user_match = owner_effective_user && (
+          bunk.owner_id == owner_effective_user.id ||
+          (bunk.owner && bunk.owner.display_name.to_s.downcase == owner_effective_user.display_name.to_s.downcase)
+        )
+
+        # Check by effective_name (for guest reservations)
+        name_match = owner_effective_name && bunk.owner && bunk.owner.display_name.to_s.downcase == owner_effective_name.to_s.downcase
+
+        user_match || name_match
+      end
+
+      # If owner is not attending, try to assign preferred members
+      unless owner_attending
+        bunk.preferred_users_ordered.each do |preferred_user|
+          # Find the reservation for this preferred user
+          preferred_reservation = reservations.find do |res|
+            effective_user = res.effective_user
+            effective_name = res.effective_name
+
+            # Check by effective_user (for member reservations)
+            user_match = effective_user && (
+              effective_user.id == preferred_user.id ||
+              effective_user.display_name.to_s.downcase == preferred_user.display_name.to_s.downcase
+            )
+
+            # Check by effective_name (for guest reservations)
+            name_match = effective_name && effective_name.to_s.downcase == preferred_user.display_name.to_s.downcase
+
+            user_match || name_match
+          end
+
+          if preferred_reservation
+            # Check gender compatibility
+            unless gender_compatible?(preferred_user, bunk)
+              next
+            end
+
+            # If this preferred member is already assigned to their owned bunk, unassign them first
+            if user_assigned_to_owned_bunk?(preferred_user, bunks)
+              # Find their current assignment and remove it
+              current_assignment = @reservation_week.bunk_assignments.find do |a|
+                effective_user = a.assignable.effective_user
+                effective_name = a.assignable.effective_name
+
+                # Check by effective_user (for member reservations)
+                user_match = effective_user && effective_user.id == preferred_user.id
+
+                # Check by effective_name (for guest reservations)
+                name_match = effective_name && effective_name.to_s.downcase == preferred_user.display_name.to_s.downcase
+
+                user_match || name_match
+              end
+
+              if current_assignment
+                current_assignment.destroy!
+                @assigned_bunk_ids.delete(current_assignment.bunk_id)
+                @assigned_assignable_ids.delete("Reservation:#{current_assignment.assignable_id}")
+              end
+            end
+
+            create_assignment(preferred_reservation, bunk)
+            break # Only assign the first available preferred member
+          end
+        end
+      end
+    end
+
+    # Step 3: Assign remaining unassigned reservations to available bunks
+    remaining_reservations = reservations.reject do |res|
+      @assigned_assignable_ids.include?("Reservation:#{res.id}")
+    end
+
+    remaining_reservations.each do |reservation|
+      available_bunks = find_available_bunks(reservation, bunks)
+      if available_bunks.any?
+        create_assignment(reservation, available_bunks.first)
+      end
+    end
   end
 
   def assign_unassigned_only
@@ -130,24 +227,31 @@ class BunkAssignmentService
 
   private
 
+  def reservations
+    @reservations ||= @reservation_week.reservations.includes(:user)
+  end
+
+  def bunks
+    @bunks ||= Bunk.includes(:room, :owner, :preferred_users, :bunk_preferred_members).joins(:room).order("rooms.order ASC, bunks.order ASC")
+  end
+
   def assign_owners(reservations, bunks)
     reservations.each do |reservation|
-      # Skip if this reservation is already assigned
-      next if @assigned_assignable_ids.include?("Reservation:#{reservation.id}")
+      effective_user = reservation.effective_user
+      next unless effective_user
 
-      # Find the bunks owned by this user
-      owned_bunks = bunks.select { |bunk| bunk.owner_id == reservation.user_id }
-      next unless owned_bunks.any?
+      # Find bunks owned by this user
+      owned_bunks = bunks.select do |bunk|
+        bunk.owner_id == effective_user.id ||
+        (bunk.owner && bunk.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
+      end
 
-      # Try to assign to their owned bunk if gender-compatible
+      # Try to assign to owned bunk
       owned_bunks.each do |bunk|
-        next if @assigned_bunk_ids.include?(bunk.id)
-
-        if gender_compatible?(reservation, bunk)
+        if !@assigned_bunk_ids.include?(bunk.id) && gender_compatible?(reservation, bunk)
           create_assignment(reservation, bunk)
-          break # Once we've assigned to one of their bunks, stop looking
-        else
-          Rails.logger.info "Owner #{reservation.user.display_name} cannot be assigned to their bunk #{bunk.name} due to gender rules"
+          debug_log "Assigned owner #{effective_user.display_name} to their bunk #{bunk.name}"
+          break
         end
       end
     end
@@ -159,20 +263,31 @@ class BunkAssignmentService
       @assigned_assignable_ids.include?("#{assignable.class.name}:#{assignable.id}")
     end
 
+    debug_log "Processing #{unassigned_assignables.size} unassigned assignables"
+
     unassigned_assignables.each do |assignable|
-      # Find available bunks for this assignable's gender
+      # Skip owners - they should only get their own bunks or remain unassigned
+      if assignable.is_a?(Reservation) && assignable.effective_user
+        effective_user = assignable.effective_user
+        owns_bunk = bunks.any? do |bunk|
+          bunk.owner_id == effective_user.id ||
+          (bunk.owner && bunk.owner.display_name.to_s.downcase == effective_user.display_name.to_s.downcase)
+        end
+
+        if owns_bunk
+          debug_log "Skipping owner #{effective_user.display_name} - they should only get their own bunks"
+          next
+        end
+      end
+
       available_bunks = find_available_bunks(assignable, bunks)
 
-      # Prefer open bunks over owned bunks
-      open_bunks = available_bunks.select(&:open?)
-      owned_bunks = available_bunks.select(&:owned?)
-
-      preferred_bunks = open_bunks.any? ? open_bunks : owned_bunks
-
-      if preferred_bunks.any?
-        # Assign to the first available bunk (ordered by room order, then bunk order)
-        bunk = preferred_bunks.sort_by { |b| [ b.room.order, b.order ] }.first
+      if available_bunks.any?
+        bunk = available_bunks.first
         create_assignment(assignable, bunk)
+        debug_log "Assigned #{assignable.effective_name} to #{bunk.name}"
+      else
+        debug_log "No available bunks for #{assignable.effective_name}"
       end
     end
   end
@@ -185,66 +300,110 @@ class BunkAssignmentService
     # Get bunks that are owned by someone who has a reservation this week
     attending_owner_ids = @reservation_week.reservations.pluck(:user_id)
 
-    # A bunk is unavailable if:
-    # 1. It's already assigned
-    # 2. It's owned by someone with a reservation who has already been assigned to a bunk
-    #    (unless it's their own reservation trying to access their bunk)
-    unavailable_owned_bunk_ids = bunks.select do |bunk|
-      bunk.owned? &&
-      attending_owner_ids.include?(bunk.owner_id) &&
-      owner_assigned_to_bunk?(bunk.owner_id) &&
-      !(assignable.is_a?(Reservation) && assignable.user_id == bunk.owner_id)
-    end.map(&:id)
-
-    # Filter bunks
     available_bunks = bunks.select do |bunk|
-      gender_compatible?(assignable, bunk) &&
-        !@assigned_bunk_ids.include?(bunk.id) &&
-        !unavailable_owned_bunk_ids.include?(bunk.id)
+      # Bunk must be unassigned
+      next false unless is_available?(bunk)
+
+      # Bunk must be gender compatible
+      next false unless gender_compatible?(assignable, bunk)
+
+      # If bunk has an owner, owner must be attending this week
+      if bunk.owner
+        next false unless attending_owner_ids.include?(bunk.owner_id)
+      end
+
+      true
     end
 
-    # Sort by room order and bunk order
-    available_bunks.sort_by { |b| [ b.room.order, b.order ] }
+    # Sort by priority: preferred member bunks first, then by room order, then bunk order
+    available_bunks.sort_by do |bunk|
+      # Check if this assignable is a preferred member for this bunk
+      is_preferred_member = false
+      if assignable.is_a?(Reservation)
+        # Check both effective_user and user for preferred member status
+        effective_user = assignable.effective_user
+        user = assignable.user
+        is_preferred_member = (effective_user && bunk.preferred_users.include?(effective_user)) ||
+                             (user && bunk.preferred_users.include?(user))
+      end
+
+      # Sort by: preferred member status (false first, so preferred members get priority), room order, bunk order
+      [ !is_preferred_member, bunk.room.order, bunk.order ]
+    end
   end
 
   def owner_assigned_to_bunk?(owner_id)
     # Check if the owner has been assigned to any bunk in this week
     @assigned_assignable_ids.any? do |assignable_key|
       assignable_type, assignable_id = assignable_key.split(":")
-      assignable_type == "Reservation" &&
-      @reservation_week.reservations.exists?(id: assignable_id, user_id: owner_id)
+      if assignable_type == "Reservation"
+        reservation = @reservation_week.reservations.find_by(id: assignable_id)
+        reservation&.user_id == owner_id
+      else
+        false
+      end
+    end
+  end
+
+  def user_assigned_to_owned_bunk?(user, bunks)
+    @assigned_bunk_ids.any? do |bunk_id|
+      bunk = bunks.find { |b| b.id == bunk_id }
+      bunk && (
+        bunk.owner_id == user.id ||
+        (bunk.owner && bunk.owner.display_name.to_s.downcase == user.display_name.to_s.downcase)
+      )
+    end
+  end
+
+  def user_owns_bunk?(user, bunks)
+    bunks.any? do |bunk|
+      bunk.owner_id == user.id ||
+      (bunk.owner && bunk.owner.display_name.to_s.downcase == user.display_name.to_s.downcase)
     end
   end
 
   def gender_compatible?(assignable, bunk)
-    room_gender = bunk.room.gender
+    room_gender = bunk.room.gender&.downcase
     assignable_gender = assignable.sex&.downcase
 
     case room_gender
-    when "men"
-      assignable_gender == "male"
     when "women"
       assignable_gender == "female"
+    when "men"
+      assignable_gender == "male"
     when "coed"
-      %w[male female].include?(assignable_gender)
+      true # All genders allowed in coed rooms
     else
-      false
+      true # Fallback - allow if room gender is not set
     end
   end
 
   def create_assignment(assignable, bunk)
     # Double-check that neither is already assigned
     assignable_key = "#{assignable.class.name}:#{assignable.id}"
-    return if @assigned_bunk_ids.include?(bunk.id) || @assigned_assignable_ids.include?(assignable_key)
 
-    BunkAssignment.create!(
+    if @assigned_assignable_ids.include?(assignable_key)
+      return
+    end
+
+    if @assigned_bunk_ids.include?(bunk.id)
+      return
+    end
+
+    # Create the assignment
+    assignment = BunkAssignment.create!(
       reservation_week: @reservation_week,
       assignable: assignable,
       bunk: bunk
     )
 
-    # Track the assignments
+    # Update tracking
     @assigned_bunk_ids.add(bunk.id)
     @assigned_assignable_ids.add(assignable_key)
+
+    debug_log "Assigned #{assignable.effective_name} to #{bunk.name}"
+
+    # Ensure in-memory assignments are up to date for unassignment logic
+    @reservation_week.bunk_assignments.reload
   end
 end
