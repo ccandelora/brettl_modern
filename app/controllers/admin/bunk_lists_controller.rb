@@ -140,6 +140,17 @@ module Admin
 
     def finalize_and_email
       begin
+        # Load assignments and split by type to handle polymorphic associations
+        @reservation_assignments = @reservation_week.bunk_assignments
+                                                 .where(assignable_type: "Reservation")
+                                                 .includes(:bunk, assignable: :user)
+        @guest_assignments = @reservation_week.bunk_assignments
+                                           .where(assignable_type: "Guest")
+                                           .includes(:bunk)
+
+        # Combine the assignments for the view
+        @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
+
         # Mark the bunk list as finalized
         @reservation_week.update!(bunk_list_finalized: true)
 
