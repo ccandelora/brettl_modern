@@ -16,8 +16,8 @@ Rails.application.configure do
       policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :unsafe_inline
       policy.style_src   :self, :https, :unsafe_inline
     else
-      # Production CSP - allow unsafe-inline for styles due to inline styles in templates
-      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval
+      # Production CSP - use nonces for inline scripts and unsafe-inline for styles
+      policy.script_src  :self, :https, "https://connect.facebook.net", :unsafe_eval, :nonce
       policy.style_src   :self, :https, :unsafe_inline
     end
 
@@ -27,12 +27,9 @@ Rails.application.configure do
     # policy.report_uri "/csp-violation-report-endpoint"
   end
 
-  # Use proper nonce generation in production for scripts only
-  if Rails.env.production?
-    # Generate secure random nonces for scripts
-    config.content_security_policy_nonce_generator = ->(request) { SecureRandom.base64(16) }
-    config.content_security_policy_nonce_directives = %w[script-src]
-  end
+  # Generate secure random nonces for scripts in production
+  config.content_security_policy_nonce_generator = ->(request) { SecureRandom.base64(16) }
+  config.content_security_policy_nonce_directives = %w[script-src]
 
   # Report violations without enforcing the policy.
   # config.content_security_policy_report_only = true

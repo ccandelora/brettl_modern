@@ -212,7 +212,7 @@
 </div>
 
 <!-- Facebook debug script -->
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   document.addEventListener('DOMContentLoaded', function() {
     // Hide loading message once Facebook widget loads
     setTimeout(function() {
