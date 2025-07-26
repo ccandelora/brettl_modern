@@ -37,8 +37,23 @@
                     <span class="text-sm text-gray-500">
                       <%= pluralize(week.reservations_count, 'reservation') %>
                     </span>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium <%= week.has_bunk_list? ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' %>">
-                      <%= week.has_bunk_list? ? 'Generated' : 'Not Generated' %>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                      <%= case week.bunk_list_status
+                          when 'finalized'
+                            'bg-blue-100 text-blue-800'
+                          when 'generated'
+                            'bg-green-100 text-green-800'
+                          else
+                            'bg-gray-100 text-gray-800'
+                          end %>">
+                      <%= case week.bunk_list_status
+                          when 'finalized'
+                            'Finalized'
+                          when 'generated'
+                            'Generated'
+                          else
+                            'Not Generated'
+                          end %>
                     </span>
                   </div>
                   <% if week.note.present? %>

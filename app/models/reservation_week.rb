@@ -9,15 +9,21 @@ class ReservationWeek < ApplicationRecord
   end
 
   def bunk_list_status
-    if bunk_assignments.any?
-      'generated'  # Could be enhanced to track draft vs finalized
+    if bunk_list_finalized?
+      "finalized"
+    elsif bunk_assignments.any?
+      "generated"
     else
-      'not_generated'
+      "not_generated"
     end
   end
 
   def has_bunk_list?
     bunk_assignments.any?
+  end
+
+  def bunk_list_finalized?
+    bunk_list_finalized == true
   end
 
   def all_assignables
