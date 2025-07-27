@@ -2,7 +2,7 @@ module Admin
   class BunkListsController < ApplicationController
     before_action :authenticate_user!
     before_action :ensure_admin!
-    before_action :set_reservation_week, only: [ :show, :edit, :update, :destroy, :generate, :print, :finalize_and_email, :add_guest ]
+    before_action :set_reservation_week, only: [ :show, :edit, :update, :destroy, :generate, :print, :add_guest ]
     skip_before_action :verify_authenticity_token, only: [ :add_guest ] if Rails.env.development?
 
     def index
