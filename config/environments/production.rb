@@ -69,6 +69,7 @@ Rails.application.configure do
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
   # Use the main database for solid_queue instead of separate database
   # config.solid_queue.connects_to = { database: { writing: :queue } }
 
