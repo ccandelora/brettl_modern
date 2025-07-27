@@ -123,37 +123,24 @@
                                   </span>
                                   <span class="text-sm font-medium text-blue-900"><%= preferred_user.display_name %></span>
                                 </div>
-                                <%= button_to "×", remove_preferred_member_admin_master_bunk_list_index_path, 
-                                    method: :delete,
-                                    params: { bunk_id: bunk.id, user_id: preferred_user.id },
-                                    data: { turbo_confirm: "Remove #{preferred_user.display_name} from preferred list?" },
-                                    class: "text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer" %>
+                                <button type="button" 
+                                    onclick="removePreferredMember(<%= bunk.id %>, <%= preferred_user.id %>, '<%= preferred_user.display_name %>')"
+                                    class="text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer">
+                                  ×
+                                </button>
                               </div>
                             <% end %>
                           </div>
                           
                           <!-- Add New Preferred Member -->
-                          <%= form_with url: add_preferred_member_admin_master_bunk_list_index_path, method: :post, local: true, class: "flex gap-2" do |pref_form| %>
-                            <%= pref_form.hidden_field :bunk_id, value: bunk.id %>
-                            <%
-                              # Filter users based on bunk room gender
-                              compatible_users = case bunk.room.gender&.downcase
-                              when 'women'
-                                User.where(sex: ['female', 'Female']).order(:name)
-                              when 'men'
-                                User.where(sex: ['male', 'Male']).order(:name)
-                              when 'coed'
-                                User.all.order(:name) # All users for coed rooms
-                              else
-                                User.all.order(:name) # Fallback
-                              end
-                            %>
-                            <%= pref_form.select :user_id, 
-                                options_from_collection_for_select(compatible_users, :id, :display_name),
-                                { prompt: "Add preferred member..." },
-                                { class: "flex-1 rounded-md border-gray-300 text-sm" } %>
-                            <%= pref_form.submit "Add", class: "px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700" %>
-                          <% end %>
+                          <div class="flex gap-2 items-center">
+                            <%= select_tag "user_id_#{bunk.id}", 
+                                options_from_collection_for_select(User.all.order(:name), :id, :display_name),
+                                { prompt: "Add preferred member...", class: "flex-1 rounded-md border-gray-300 text-sm" } %>
+                            <button type="button" onclick="addPreferredMember(<%= bunk.id %>)" class="bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center w-8 h-8 flex-shrink-0">
+                              <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -217,37 +204,24 @@
                                   </span>
                                   <span class="text-sm font-medium text-blue-900"><%= preferred_user.display_name %></span>
                                 </div>
-                                <%= button_to "×", remove_preferred_member_admin_master_bunk_list_index_path, 
-                                    method: :delete,
-                                    params: { bunk_id: bunk.id, user_id: preferred_user.id },
-                                    data: { turbo_confirm: "Remove #{preferred_user.display_name} from preferred list?" },
-                                    class: "text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer" %>
+                                <button type="button" 
+                                    onclick="removePreferredMember(<%= bunk.id %>, <%= preferred_user.id %>, '<%= preferred_user.display_name %>')"
+                                    class="text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer">
+                                  ×
+                                </button>
                               </div>
                             <% end %>
                           </div>
                           
                           <!-- Add New Preferred Member -->
-                          <%= form_with url: add_preferred_member_admin_master_bunk_list_index_path, method: :post, local: true, class: "flex gap-2" do |pref_form| %>
-                            <%= pref_form.hidden_field :bunk_id, value: bunk.id %>
-                            <%
-                              # Filter users based on bunk room gender
-                              compatible_users = case bunk.room.gender&.downcase
-                              when 'women'
-                                User.where(sex: ['female', 'Female']).order(:name)
-                              when 'men'
-                                User.where(sex: ['male', 'Male']).order(:name)
-                              when 'coed'
-                                User.all.order(:name) # All users for coed rooms
-                              else
-                                User.all.order(:name) # Fallback
-                              end
-                            %>
-                            <%= pref_form.select :user_id, 
-                                options_from_collection_for_select(compatible_users, :id, :display_name),
-                                { prompt: "Add preferred member..." },
-                                { class: "flex-1 rounded-md border-gray-300 text-sm" } %>
-                            <%= pref_form.submit "Add", class: "px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700" %>
-                          <% end %>
+                          <div class="flex gap-2 items-center">
+                            <%= select_tag "user_id_#{bunk.id}", 
+                                options_from_collection_for_select(User.all.order(:name), :id, :display_name),
+                                { prompt: "Add preferred member...", class: "flex-1 rounded-md border-gray-300 text-sm" } %>
+                            <button type="button" onclick="addPreferredMember(<%= bunk.id %>)" class="bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center w-8 h-8 flex-shrink-0">
+                              <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -311,37 +285,24 @@
                                   </span>
                                   <span class="text-sm font-medium text-blue-900"><%= preferred_user.display_name %></span>
                                 </div>
-                                <%= button_to "×", remove_preferred_member_admin_master_bunk_list_index_path, 
-                                    method: :delete,
-                                    params: { bunk_id: bunk.id, user_id: preferred_user.id },
-                                    data: { turbo_confirm: "Remove #{preferred_user.display_name} from preferred list?" },
-                                    class: "text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer" %>
+                                <button type="button" 
+                                    onclick="removePreferredMember(<%= bunk.id %>, <%= preferred_user.id %>, '<%= preferred_user.display_name %>')"
+                                    class="text-red-600 hover:text-red-800 text-lg font-bold bg-transparent border-0 p-0 cursor-pointer">
+                                  ×
+                                </button>
                               </div>
                             <% end %>
                           </div>
                           
                           <!-- Add New Preferred Member -->
-                          <%= form_with url: add_preferred_member_admin_master_bunk_list_index_path, method: :post, local: true, class: "flex gap-2" do |pref_form| %>
-                            <%= pref_form.hidden_field :bunk_id, value: bunk.id %>
-                            <%
-                              # Filter users based on bunk room gender
-                              compatible_users = case bunk.room.gender&.downcase
-                              when 'women'
-                                User.where(sex: ['female', 'Female']).order(:name)
-                              when 'men'
-                                User.where(sex: ['male', 'Male']).order(:name)
-                              when 'coed'
-                                User.all.order(:name) # All users for coed rooms
-                              else
-                                User.all.order(:name) # Fallback
-                              end
-                            %>
-                            <%= pref_form.select :user_id, 
-                                options_from_collection_for_select(compatible_users, :id, :display_name),
-                                { prompt: "Add preferred member..." },
-                                { class: "flex-1 rounded-md border-gray-300 text-sm" } %>
-                            <%= pref_form.submit "Add", class: "px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700" %>
-                          <% end %>
+                          <div class="flex gap-2 items-center">
+                            <%= select_tag "user_id_#{bunk.id}", 
+                                options_from_collection_for_select(User.all.order(:name), :id, :display_name),
+                                { prompt: "Add preferred member...", class: "flex-1 rounded-md border-gray-300 text-sm" } %>
+                            <button type="button" onclick="addPreferredMember(<%= bunk.id %>)" class="bg-blue-600 text-white rounded-full hover:bg-blue-700 flex items-center justify-center w-8 h-8 flex-shrink-0">
+                              <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -358,8 +319,104 @@
         <%= submit_tag "Save Owner Changes", 
             class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700" %>
       </div>
-      
-
     <% end %>
-  </div>
-</div> 
+
+    <!-- JavaScript for handling preferred member additions -->
+    <script>
+      function addPreferredMember(bunkId) {
+        const select = document.getElementById('user_id_' + bunkId);
+        const button = select.nextElementSibling; // The + button
+        const userId = select.value;
+        
+        if (!userId) {
+          alert('Please select a user to add as preferred member.');
+          return;
+        }
+        
+        // Show loading state
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i>';
+        button.disabled = true;
+        button.classList.add('opacity-50');
+        
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<%= add_preferred_member_admin_master_bunk_list_index_path %>';
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'authenticity_token';
+        csrfToken.value = '<%= form_authenticity_token %>';
+        form.appendChild(csrfToken);
+        
+        // Add bunk_id
+        const bunkIdInput = document.createElement('input');
+        bunkIdInput.type = 'hidden';
+        bunkIdInput.name = 'bunk_id';
+        bunkIdInput.value = bunkId;
+        form.appendChild(bunkIdInput);
+        
+        // Add user_id
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_id';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      function removePreferredMember(bunkId, userId, userName) {
+        if (!confirm('Remove ' + userName + ' from preferred list?')) {
+          return;
+        }
+        
+        // Find the button that was clicked
+        const button = event.target;
+        
+        // Show loading state
+        const originalContent = button.innerHTML;
+        button.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i>';
+        button.disabled = true;
+        button.classList.add('opacity-50');
+        
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<%= remove_preferred_member_admin_master_bunk_list_index_path %>';
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'authenticity_token';
+        csrfToken.value = '<%= form_authenticity_token %>';
+        form.appendChild(csrfToken);
+        
+        // Add bunk_id
+        const bunkIdInput = document.createElement('input');
+        bunkIdInput.type = 'hidden';
+        bunkIdInput.name = 'bunk_id';
+        bunkIdInput.value = bunkId;
+        form.appendChild(bunkIdInput);
+        
+        // Add user_id
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'hidden';
+        userIdInput.name = 'user_id';
+        userIdInput.value = userId;
+        form.appendChild(userIdInput);
+        
+        // Add _method for DELETE
+        const methodInput = document.createElement('input');
+        methodInput.type = 'hidden';
+        methodInput.name = '_method';
+        methodInput.value = 'delete';
+        form.appendChild(methodInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+      }
+    </script> 
