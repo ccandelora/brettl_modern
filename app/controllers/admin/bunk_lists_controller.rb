@@ -123,10 +123,7 @@ module Admin
       @men_rooms = @rooms.men
       @coed_rooms = @rooms.coed
 
-      # Load assignments separately to handle polymorphic associations
-      @bunk_assignments = @reservation_week.bunk_assignments.includes(:bunk)
-
-      # Split assignments by type and include necessary associations
+      # Load assignments and split by type to handle polymorphic associations
       @reservation_assignments = @reservation_week.bunk_assignments
                                                .where(assignable_type: "Reservation")
                                                .includes(:bunk, assignable: :user)
@@ -134,43 +131,12 @@ module Admin
                                          .where(assignable_type: "Guest")
                                          .includes(:bunk)
 
+      # Combine the assignments for the view
+      @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
+                                         .includes(:bunk)
+
       @stats = calculate_bunk_statistics
       render layout: "print"
-    end
-
-    def finalize_and_email
-      begin
-        # Load assignments and split by type to handle polymorphic associations
-        @reservation_assignments = @reservation_week.bunk_assignments
-                                                 .where(assignable_type: "Reservation")
-                                                 .includes(:bunk, assignable: :user)
-        @guest_assignments = @reservation_week.bunk_assignments
-                                           .where(assignable_type: "Guest")
-                                           .includes(:bunk)
-
-        # Combine the assignments for the view
-        @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
-
-        # Mark the bunk list as finalized
-        @reservation_week.update!(bunk_list_finalized: true)
-
-        # Send emails to all participants
-        @bunk_assignments.each do |assignment|
-          case assignment.assignable_type
-          when "Reservation"
-            BunkListMailer.assignment_notification(assignment).deliver_later
-          when "Guest"
-            # For guests, we might want to notify the admin or the person who added them
-            BunkListMailer.guest_assignment_notification(assignment).deliver_later
-          end
-        end
-
-        redirect_to admin_bunk_list_path(@reservation_week),
-                    notice: "Bunk list has been finalized and emails are being sent."
-      rescue StandardError => e
-        redirect_to admin_bunk_list_path(@reservation_week),
-                    alert: "Error finalizing bunk list: #{e.message}"
-      end
     end
 
     private

@@ -36,7 +36,6 @@ Rails.application.routes.draw do
       member do
         post :generate
         get :print
-        post :finalize_and_email
         post :add_guest
       end
     end
