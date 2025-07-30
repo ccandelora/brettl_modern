@@ -75,6 +75,16 @@ class ReservationsController < ApplicationController
     end
 
     if @reservation.save
+      # If this is a guest reservation, create a Guest object for bunk assignment
+      if @reservation.reservation_type == "guest"
+        # Create a Guest object for the person being reserved for
+        guest = @reservation_week.guests.create!(
+          name: @reservation.name,
+          sex: @reservation.sex,
+          guest_type: @reservation.res_member_type
+        )
+      end
+
       redirect_to app_reservation_week_path(date: @reservation_week.res_date.strftime("%Y-%m-%d")), notice: "Reservation was successfully created."
     else
       render :new
@@ -90,6 +100,20 @@ class ReservationsController < ApplicationController
     end
 
     if @reservation.update(reservation_params)
+      # If this is a guest reservation, update the corresponding Guest object
+      if @reservation.reservation_type == "guest"
+        guest = @reservation_week.guests.find_by(name: @reservation.name_was) if @reservation.name_changed?
+        guest ||= @reservation_week.guests.find_by(name: @reservation.name)
+
+        if guest
+          guest.update!(
+            name: @reservation.name,
+            sex: @reservation.sex,
+            guest_type: @reservation.res_member_type
+          )
+        end
+      end
+
       redirect_to app_reservation_week_path(date: @reservation_week.res_date.strftime("%Y-%m-%d")), notice: "Reservation was successfully updated."
     else
       render :edit
@@ -98,6 +122,12 @@ class ReservationsController < ApplicationController
 
   # DELETE /reservations/1 or /reservations/1.json
   def destroy
+    # If this is a guest reservation, also delete the corresponding Guest object
+    if @reservation.reservation_type == "guest"
+      guest = @reservation_week.guests.find_by(name: @reservation.name)
+      guest&.destroy
+    end
+
     @reservation.destroy
     redirect_to app_reservation_week_path(date: @reservation_week.res_date.strftime("%Y-%m-%d")), notice: "Reservation was successfully deleted."
   end
