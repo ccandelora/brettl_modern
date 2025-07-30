@@ -49,7 +49,7 @@ class ReservationsController < ApplicationController
     when "myself"
       # Reservation for the current user
       @reservation.user = current_user
-      @reservation.name = current_user.name if @reservation.name.blank?
+      @reservation.name = current_user.name # Always use user's name for myself reservations
       # Auto-populate from current user's profile
       @reservation.sex = current_user.sex if @reservation.sex.blank?
       @reservation.res_member_type = current_user.membership_type if @reservation.res_member_type.blank?
@@ -58,7 +58,7 @@ class ReservationsController < ApplicationController
       if @reservation.other_member_id.present?
         other_member = User.find(@reservation.other_member_id)
         @reservation.user = other_member
-        @reservation.name = other_member.name if @reservation.name.blank?
+        @reservation.name = other_member.name # Always use member's name for other_member reservations
         # Auto-populate from other member's profile
         @reservation.sex = other_member.sex if @reservation.sex.blank?
         @reservation.res_member_type = other_member.membership_type if @reservation.res_member_type.blank?

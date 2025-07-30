@@ -40,7 +40,11 @@
     </label>
     <%= text_field_tag "reservation[name]", reservation.name, 
         class: "block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-        data: { reservation_form_target: "nameField" } %>
+        data: { reservation_form_target: "nameField" },
+        readonly: reservation.reservation_type != 'guest' %>
+    <div class="mt-1 text-sm text-gray-500" data-reservation-form-target="nameHelpText">
+      <!-- Help text will be updated by JavaScript -->
+    </div>
   </div>
 
   <!-- Reservation Type Selection -->

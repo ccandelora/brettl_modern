@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["memberSelection", "nameField"]
+  static targets = ["memberSelection", "nameField", "nameHelpText"]
 
   connect() {
     console.log("ReservationFormController connected!")
@@ -45,22 +45,34 @@ export default class extends Controller {
     const memberSelect = this.element.querySelector('select[name*="other_member_id"]')
     
     if (myselfRadio && myselfRadio.checked) {
-      // "For Myself" selected - fill with current user's name
+      // "For Myself" selected - fill with current user's name and disable field
       const currentUserName = this.element.querySelector('input[name*="user_id"]').getAttribute('data-user-name')
       if (currentUserName) {
         this.nameFieldTarget.value = currentUserName
       }
+      this.nameFieldTarget.readOnly = true
+      this.nameFieldTarget.classList.add('bg-gray-100')
+      this.nameHelpTextTarget.textContent = "Name automatically set to your user record"
     } else if (otherMemberRadio && otherMemberRadio.checked && memberSelect) {
-      // "For Another Member" selected - fill with selected member's name
+      // "For Another Member" selected - fill with selected member's name and disable field
       const selectedOption = memberSelect.options[memberSelect.selectedIndex]
       if (selectedOption && selectedOption.value) {
         this.nameFieldTarget.value = selectedOption.text
+        this.nameFieldTarget.readOnly = true
+        this.nameFieldTarget.classList.add('bg-gray-100')
+        this.nameHelpTextTarget.textContent = "Name automatically set to selected member's user record"
       } else {
         this.nameFieldTarget.value = ""
+        this.nameFieldTarget.readOnly = true
+        this.nameFieldTarget.classList.add('bg-gray-100')
+        this.nameHelpTextTarget.textContent = "Please select a member first"
       }
     } else if (guestRadio && guestRadio.checked) {
-      // "For a Guest" selected - clear the name field
+      // "For a Guest" selected - enable the name field for manual entry
       this.nameFieldTarget.value = ""
+      this.nameFieldTarget.readOnly = false
+      this.nameFieldTarget.classList.remove('bg-gray-100')
+      this.nameHelpTextTarget.textContent = "Enter the guest's name"
     }
     
     // Also update other fields when name changes
