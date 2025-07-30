@@ -372,7 +372,8 @@ class BunkAssignmentService
     when "men"
       assignable_gender == "male"
     when "coed"
-      true # All genders allowed in coed rooms
+      # Coed rooms accept both male and female occupants (same as model validation)
+      %w[male female].include?(assignable_gender)
     else
       true # Fallback - allow if room gender is not set
     end
