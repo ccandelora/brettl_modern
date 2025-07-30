@@ -229,11 +229,18 @@
                     <% end %>
                   </div>
                   <div class="text-sm text-red-700">
-                    <%= assignable.sex %> •
                     <% if assignable.is_a?(Guest) %>
-                      Guest
+                      <%= assignable.sex %> • Guest
                     <% else %>
-                      <%= assignable.res_member_type %>
+                      <% 
+                        # Get the effective sex for display
+                        effective_sex = if assignable.effective_user
+                          assignable.effective_user.sex
+                        else
+                          assignable.sex
+                        end
+                      %>
+                      <%= effective_sex %> • <%= assignable.res_member_type %>
                     <% end %>
                   </div>
                 </div>

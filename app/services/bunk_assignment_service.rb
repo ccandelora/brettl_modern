@@ -364,16 +364,30 @@ class BunkAssignmentService
 
   def gender_compatible?(assignable, bunk)
     room_gender = bunk.room.gender&.downcase
-    assignable_gender = assignable.sex&.downcase
+
+    # Get the effective sex for the assignable
+    assignable_sex = if assignable.is_a?(Reservation)
+      # For reservations, use the effective user's sex
+      effective_user = assignable.effective_user
+      if effective_user
+        effective_user.sex&.downcase
+      else
+        # For guest non-member reservations, use the reservation's sex field
+        assignable.sex&.downcase
+      end
+    else
+      # For guests, use their own sex
+      assignable.sex&.downcase
+    end
 
     case room_gender
     when "women"
-      assignable_gender == "female"
+      assignable_sex == "female"
     when "men"
-      assignable_gender == "male"
+      assignable_sex == "male"
     when "coed"
       # Coed rooms accept both male and female occupants (same as model validation)
-      %w[male female].include?(assignable_gender)
+      %w[male female].include?(assignable_sex)
     else
       true # Fallback - allow if room gender is not set
     end
