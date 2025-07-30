@@ -83,6 +83,9 @@ class ReservationsController < ApplicationController
           sex: @reservation.sex,
           guest_type: @reservation.res_member_type
         )
+
+        # Link the reservation to the guest
+        @reservation.update!(guest: guest)
       end
 
       redirect_to app_reservation_week_path(date: @reservation_week.res_date.strftime("%Y-%m-%d")), notice: "Reservation was successfully created."
@@ -102,15 +105,24 @@ class ReservationsController < ApplicationController
     if @reservation.update(reservation_params)
       # If this is a guest reservation, update the corresponding Guest object
       if @reservation.reservation_type == "guest"
-        guest = @reservation_week.guests.find_by(name: @reservation.name_was) if @reservation.name_changed?
-        guest ||= @reservation_week.guests.find_by(name: @reservation.name)
+        # Find the associated guest
+        guest = @reservation.guest
 
         if guest
+          # Update the guest with the reservation's current information
           guest.update!(
             name: @reservation.name,
             sex: @reservation.sex,
             guest_type: @reservation.res_member_type
           )
+        else
+          # If no guest is associated, create one (this shouldn't happen but handles edge cases)
+          guest = @reservation_week.guests.create!(
+            name: @reservation.name,
+            sex: @reservation.sex,
+            guest_type: @reservation.res_member_type
+          )
+          @reservation.update!(guest: guest)
         end
       end
 
@@ -123,9 +135,8 @@ class ReservationsController < ApplicationController
   # DELETE /reservations/1 or /reservations/1.json
   def destroy
     # If this is a guest reservation, also delete the corresponding Guest object
-    if @reservation.reservation_type == "guest"
-      guest = @reservation_week.guests.find_by(name: @reservation.name)
-      guest&.destroy
+    if @reservation.reservation_type == "guest" && @reservation.guest
+      @reservation.guest.destroy
     end
 
     @reservation.destroy

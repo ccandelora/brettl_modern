@@ -27,7 +27,10 @@ class ReservationWeek < ApplicationRecord
   end
 
   def all_assignables
-    reservations + guests
+    # For guest reservations, only include the Guest objects, not the Reservation objects
+    # This prevents double assignment and ensures proper bunk assignment logic
+    member_reservations = reservations.reject { |r| r.reservation_type == "guest" }
+    member_reservations + guests
   end
 
   def unassigned_assignables

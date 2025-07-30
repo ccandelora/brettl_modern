@@ -1,5 +1,6 @@
 class Guest < ApplicationRecord
   belongs_to :reservation_week
+  has_one :reservation, foreign_key: :guest_id, dependent: :destroy
   has_one :bunk_assignment, as: :assignable, dependent: :destroy
   has_one :assigned_bunk, through: :bunk_assignment, source: :bunk
 

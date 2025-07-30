@@ -1,6 +1,7 @@
 class Reservation < ApplicationRecord
   belongs_to :user
   belongs_to :reservation_week, counter_cache: true
+  belongs_to :guest, optional: true
   has_one :bunk_assignment, as: :assignable, dependent: :destroy
   has_one :assigned_bunk, through: :bunk_assignment, source: :bunk
 
@@ -54,6 +55,9 @@ class Reservation < ApplicationRecord
       user.display_name
     elsif guest_member_reservation?
       guest_user&.display_name || name
+    elsif guest_reservation? && guest
+      # For guest reservations, use the associated guest's name
+      guest.name
     else
       name
     end

@@ -1,36 +1,35 @@
-namespace :reservations do
-  desc "Create Guest objects for existing guest reservations that don't have them"
+namespace :data do
+  desc "Fix guest reservations that don't have proper associations with Guest objects"
   task fix_guest_reservations: :environment do
-    puts "Creating Guest objects for existing guest reservations..."
+    puts "Fixing guest reservations..."
 
-    fixed_count = 0
-    error_count = 0
+    # Find all guest reservations that don't have an associated guest
+    guest_reservations_without_guest = Reservation.where(reservation_type: "guest").where(guest_id: nil)
 
-    Reservation.where(reservation_type: "guest").includes(:reservation_week).each do |reservation|
-      # Check if a Guest object already exists for this reservation
+    puts "Found #{guest_reservations_without_guest.count} guest reservations without proper associations"
+
+    guest_reservations_without_guest.each do |reservation|
+      puts "Processing reservation #{reservation.id} for #{reservation.name}..."
+
+      # Check if there's already a guest with the same name in the same week
       existing_guest = reservation.reservation_week.guests.find_by(name: reservation.name)
 
       if existing_guest
-        puts "  Skipping #{reservation.name} (#{reservation.reservation_week.res_date}): Guest object already exists"
-        next
-      end
-
-      begin
-        # Create a Guest object for this guest reservation
+        # Link the reservation to the existing guest
+        reservation.update!(guest: existing_guest)
+        puts "  Linked to existing guest #{existing_guest.id}"
+      else
+        # Create a new guest and link it
         guest = reservation.reservation_week.guests.create!(
           name: reservation.name,
           sex: reservation.sex,
           guest_type: reservation.res_member_type
         )
-
-        puts "  Created Guest object for #{reservation.name} (#{reservation.reservation_week.res_date})"
-        fixed_count += 1
-      rescue => e
-        puts "  ERROR creating Guest for #{reservation.name} (#{reservation.reservation_week.res_date}): #{e.message}"
-        error_count += 1
+        reservation.update!(guest: guest)
+        puts "  Created new guest #{guest.id} and linked"
       end
     end
 
-    puts "Done! Created #{fixed_count} Guest objects. Errors: #{error_count}"
+    puts "Completed fixing guest reservations"
   end
 end
