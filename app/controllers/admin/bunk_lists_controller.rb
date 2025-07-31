@@ -131,9 +131,9 @@ module Admin
                                          .where(assignable_type: "Guest")
                                          .includes(:bunk)
 
-      # Combine the assignments for the view
+      # Combine the assignments for the view and sort by bunk name
+      # Note: We can't call includes() after combining since it becomes an Array
       @bunk_assignments = (@reservation_assignments + @guest_assignments).sort_by { |ba| ba.bunk.name }
-                                         .includes(:bunk)
 
       @stats = calculate_bunk_statistics
       render layout: "print"
