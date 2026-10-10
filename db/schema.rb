@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_30_233041) do
+ActiveRecord::Schema[8.0].define(version: 2026_10_10_203000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -104,6 +104,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_233041) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["type"], name: "index_ckeditor_assets_on_type"
+  end
+
+  create_table "contact_submission_rate_limits", force: :cascade do |t|
+    t.string "ip_hash", null: false
+    t.datetime "window_started_at", null: false
+    t.integer "submissions_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ip_hash", "window_started_at"], name: "index_contact_rate_limits_on_ip_hash_and_window", unique: true
   end
 
   create_table "guests", force: :cascade do |t|

@@ -13,5 +13,6 @@ pin "controllers/mobile_menu_controller", to: "controllers/mobile_menu_controlle
 pin "controllers/testimonials_controller", to: "controllers/testimonials_controller.js"
 pin "controllers/bunk_editor_controller", to: "controllers/bunk_editor_controller.js"
 pin "controllers/reservation_form_controller", to: "controllers/reservation_form_controller.js"
+pin "controllers/contact_form_controller", to: "controllers/contact_form_controller.js"
 pin "trix"
 pin "@rails/actiontext", to: "actiontext.esm.js"

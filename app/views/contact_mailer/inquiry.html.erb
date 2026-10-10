@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body style="margin: 0; padding: 24px 12px; background: #f3f4f6; color: #1f2937; font-family: Arial, Helvetica, sans-serif;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width: 100%; max-width: 600px; background: #ffffff; border-radius: 14px; overflow: hidden;">
+            <tr>
+              <td style="padding: 28px 32px; background: #0f3d5e; color: #ffffff;">
+                <p style="margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;">Brettl-Hupfers Ski Club</p>
+                <h1 style="margin: 0; font-size: 26px; line-height: 1.25;">New website message</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 28px 32px 12px;">
+                <p style="margin: 0; font-size: 16px; line-height: 1.55;">A visitor has sent a message through the website. Reply directly to this email to contact them.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 32px 20px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border: 1px solid #dbe3ea; border-radius: 8px; border-collapse: separate; overflow: hidden;">
+                  <% [
+                    ["Name", @contact.name],
+                    ["Email", @contact.email],
+                    ["Mobile", @contact.phone.presence || "Not provided"],
+                    ["Preferred contact", @contact.preferred_contact_method.capitalize],
+                    ["How they heard about us", @contact.source.presence || "Not provided"],
+                    ["Activities", @contact.activities.presence&.join(", ") || "Not provided"],
+                    ["Other activity", @contact.activity_other.presence || "Not provided"],
+                    ["Newsletter opt-in", @contact.newsletter? ? "Yes" : "No"]
+                  ].each_with_index do |(label, value), index| %>
+                    <tr>
+                      <td style="width: 38%; padding: 12px 14px; border-bottom: <%= index == 7 ? "0" : "1px solid #e5e7eb" %>; background: #f8fafc; color: #52606d; font-size: 13px; font-weight: 700; vertical-align: top;"><%= label %></td>
+                      <td style="padding: 12px 14px; border-bottom: <%= index == 7 ? "0" : "1px solid #e5e7eb" %>; color: #172b3a; font-size: 14px; line-height: 1.45;"><%= value %></td>
+                    </tr>
+                  <% end %>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 0 32px 32px;">
+                <p style="margin: 0 0 8px; color: #52606d; font-size: 13px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;">Their message</p>
+                <div style="padding: 18px; background: #f8fafc; border-left: 4px solid #3f8abf; border-radius: 4px; color: #172b3a; font-size: 15px; line-height: 1.6; white-space: pre-wrap;"><%= @contact.joke.presence || "No message provided." %></div>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 18px 32px; background: #f8fafc; color: #687782; font-size: 12px; line-height: 1.5;">
+                Submitted through brettl.org. This message was sent because a visitor completed the website contact form.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
