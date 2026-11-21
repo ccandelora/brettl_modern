@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   get "payment", to: "static#payment"
   get "volleyball", to: "static#volleyball"
   get "at_week", to: "static#at_week"
+  get "contact", to: "contacts#new"
+  post "contact", to: "contacts#create"
 
   namespace :admin do
     root "dashboard#index"

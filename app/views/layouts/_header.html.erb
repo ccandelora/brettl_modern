@@ -37,6 +37,8 @@
             </div>
           </div>
 
+          <%= link_to "Contact", contact_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors" %>
+
           <!-- Reservations (Only show when logged in) -->
           <% if user_signed_in? %>
             <div class="relative" data-controller="dropdown">
@@ -125,6 +127,8 @@
             <%= link_to "Volleyball", volleyball_path, class: "block px-3 py-1 text-sm text-gray-600 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
           </div>
         </div>
+
+        <%= link_to "Contact", contact_path, class: "px-3 py-2 text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50 rounded-md transition-colors" %>
 
         <% if user_signed_in? %>
           <!-- Reservations Section -->

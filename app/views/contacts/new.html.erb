@@ -1,0 +1,114 @@
+<% content_for :title, "Contact Brettl-Hupfers Ski & Sports Club" %>
+<% content_for :description, "Get in touch with the Brettl-Hupfers Ski & Sports Club." %>
+
+<div class="bg-white py-16 sm:py-24">
+  <div class="mx-auto max-w-3xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Get In Touch</h1>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        Interested in the club, a visit, or one of our activities? We would love to hear from you.
+      </p>
+    </div>
+
+    <div class="mt-12 rounded-2xl bg-gray-50 p-6 shadow-sm sm:p-10">
+      <%= form_with model: @contact, url: contact_path, class: "space-y-7", data: { controller: "contact-form" } do |form| %>
+        <%= hidden_field_tag :form_token, @form_token %>
+
+        <div class="absolute -left-[10000px]" aria-hidden="true">
+          <%= label_tag "contact_website", "Website" %>
+          <%= text_field_tag "contact[website]", nil, id: "contact_website", tabindex: "-1", autocomplete: "off" %>
+        </div>
+
+        <% if @contact.errors.any? %>
+          <div class="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-800" role="alert">
+            <p class="font-semibold">Please correct the following:</p>
+            <ul class="mt-2 list-disc space-y-1 pl-5">
+              <% @contact.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <%= form.label :name, class: "block text-sm font-semibold text-gray-900" %>
+            <%= form.text_field :name, required: true, autocomplete: "name", class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+          </div>
+
+          <div>
+            <%= form.label :email, class: "block text-sm font-semibold text-gray-900" %>
+            <%= form.email_field :email, required: true, autocomplete: "email", class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+          </div>
+
+          <div>
+            <%= form.label :phone, "Mobile number", class: "block text-sm font-semibold text-gray-900" %>
+            <%= form.telephone_field :phone, autocomplete: "tel", class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend class="block text-sm font-semibold text-gray-900">Preferred contact method</legend>
+          <div class="mt-3 flex gap-6">
+            <label class="flex items-center gap-2 text-sm text-gray-700">
+              <%= form.radio_button :preferred_contact_method, "email" %> Email
+            </label>
+            <label class="flex items-center gap-2 text-sm text-gray-700">
+              <%= form.radio_button :preferred_contact_method, "phone" %> Phone
+            </label>
+          </div>
+        </fieldset>
+
+        <div>
+          <%= form.label :source, "How did you hear about us?", class: "block text-sm font-semibold text-gray-900" %>
+          <%= form.text_field :source, placeholder: "A friend, Instagram, Flyer…", class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+        </div>
+
+        <fieldset>
+          <legend class="block text-sm font-semibold text-gray-900">Outdoor activities of interest</legend>
+          <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <% ContactForm::ACTIVITIES.each do |activity| %>
+              <label class="flex items-center gap-2 text-sm text-gray-700">
+                <%= check_box_tag "contact[activities][]", activity, @contact.activities.include?(activity), id: "contact_activity_#{activity.parameterize}", data: { action: "change->contact-form#toggleOther" } %>
+                <%= activity %>
+              </label>
+            <% end %>
+          </div>
+          <div data-contact-form-target="otherActivity" class="hidden">
+            <%= form.label :activity_other, "Other activity", class: "mt-4 block text-sm font-semibold text-gray-900" %>
+            <%= form.text_field :activity_other, class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+          </div>
+        </fieldset>
+
+        <div>
+          <%= form.label :joke, "Know any good jokes? Got any questions?", class: "block text-sm font-semibold text-gray-900" %>
+          <%= form.text_area :joke, rows: 6, class: "mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-600 focus:ring-indigo-600" %>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-gray-700">
+          <%= form.check_box :newsletter, class: "mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" %>
+          <span>I would like to receive occasional club news by email. You will receive a confirmation email before being added.</span>
+        </label>
+
+        <div>
+          <%= form.submit "Submit", class: "inline-flex justify-center rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 gap-6 text-center sm:grid-cols-3">
+      <div>
+        <h2 class="font-semibold text-gray-900">Email</h2>
+        <p class="mt-2 text-sm text-gray-600">brettl.hupfers@gmail.com</p>
+      </div>
+      <div>
+        <h2 class="font-semibold text-gray-900">Phone</h2>
+        <p class="mt-2 text-sm text-gray-600">(603) 374-9242</p>
+      </div>
+      <div>
+        <h2 class="font-semibold text-gray-900">Visit</h2>
+        <p class="mt-2 text-sm text-gray-600">1 George Street<br>Bartlett Village, NH</p>
+      </div>
+    </div>
+  </div>
+</div>

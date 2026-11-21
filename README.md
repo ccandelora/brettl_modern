@@ -109,6 +109,17 @@ BREVO_USERNAME=your-brevo-smtp-username
 BREVO_PASSWORD=your-brevo-smtp-password
 ```
 
+### Optional Mailchimp Newsletter Integration
+
+The public contact form sends inquiries through Brevo. When a visitor explicitly opts in to club news, it can also start Mailchimp's double opt-in flow. Set these Heroku config vars after obtaining a restricted API key for the club's intended Audience:
+
+```bash
+MAILCHIMP_API_KEY=your-mailchimp-api-key
+MAILCHIMP_AUDIENCE_ID=your-mailchimp-audience-id
+```
+
+Without both values, the inquiry is still delivered by email and the opt-in is noted in that email for manual follow-up.
+
 ### Database Configuration
 
 Update `config/database.yml` with your PostgreSQL credentials:

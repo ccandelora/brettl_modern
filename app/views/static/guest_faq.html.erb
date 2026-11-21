@@ -13,10 +13,7 @@
         There's no better way to get to know us than coming up for a weekend to ski, snowboard, hike, or tube with us. Your mountain adventure starts here!
       </p>
       <div class="mt-10 flex items-center justify-center gap-x-6">
-        <a href="mailto:brettl.hupfers@gmail.com" 
-           class="rounded-md bg-white px-6 py-3 text-base font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors">
-          Find a Host Member
-        </a>
+        <%= link_to "Find a Host Member", contact_path, class: "rounded-md bg-white px-6 py-3 text-base font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors" %>
       </div>
     </div>
   </div>
@@ -215,13 +212,10 @@
       <h3 class="text-2xl font-bold tracking-tight text-gray-900 mb-4">Ready to Visit?</h3>
       <p class="text-lg text-gray-600 mb-8">Connect with a club member to start planning your mountain getaway!</p>
       <div class="inline-flex items-center gap-4">
-        <a href="mailto:brettl.hupfers@gmail.com" 
-           class="rounded-md bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors">
-          Contact for Host Connection
-        </a>
+        <%= link_to "Contact for Host Connection", contact_path, class: "rounded-md bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors" %>
         <%= link_to "Learn About Membership", membership_path, 
             class: "rounded-md border border-gray-300 px-6 py-3 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 transition-colors" %>
       </div>
     </div>
   </div>
-</div> 
+</div>

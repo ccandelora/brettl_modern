@@ -1,0 +1,13 @@
+New website contact
+
+Name: <%= @contact.name %>
+Email: <%= @contact.email %>
+Phone: <%= @contact.phone.presence || "Not provided" %>
+Preferred contact method: <%= @contact.preferred_contact_method.capitalize %>
+How they heard about us: <%= @contact.source.presence || "Not provided" %>
+Activities: <%= @contact.activities.presence&.join(", ") || "Not provided" %>
+Other activity: <%= @contact.activity_other.presence || "Not provided" %>
+Newsletter opt-in: <%= @contact.newsletter? ? "Yes" : "No" %>
+
+Message:
+<%= @contact.joke.presence || "Not provided" %>
