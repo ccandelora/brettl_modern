@@ -9,6 +9,9 @@ class ContactsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", "Get In Touch"
     assert_select "form[action='#{contact_path}'][method='post']"
+    assert_select "input[name='contact[name]']"
+    assert_select "input[name='contact[email]']"
+    assert_select "input[name='contact[newsletter]']"
   end
 
   test "delivers a complete contact submission" do
@@ -22,9 +25,17 @@ class ContactsControllerTest < ActionDispatch::IntegrationTest
       post contact_url, params: { form_token: token, contact: complete_contact_params }
     end
 
-    assert_redirected_to contact_url
+    assert_redirected_to contact_url(submitted: "1")
     assert_equal 1, ActionMailer::Base.deliveries.size
-    assert_equal "Thanks — we’ll be in touch soon.", flash[:notice]
+  end
+
+  test "shows a confirmation instead of the form after a successful submission" do
+    get contact_url(submitted: "1")
+
+    assert_response :success
+    assert_select "h2", "Thanks — your message has been sent."
+    assert_select "form", count: 0
+    assert_select "a[href='#{contact_path}']", "Send another message"
   end
 
   test "treats SQL-looking input as ordinary message content" do
@@ -40,7 +51,7 @@ class ContactsControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to contact_url
+    assert_redirected_to contact_url(submitted: "1")
     assert_equal 1, ActionMailer::Base.deliveries.size
     assert User.table_exists?
     assert_equal original_user_count, User.count
@@ -94,7 +105,7 @@ class ContactsControllerTest < ActionDispatch::IntegrationTest
         post contact_url, params: { form_token: form_token, contact: complete_contact_params }
       end
 
-      assert_redirected_to contact_url
+      assert_redirected_to contact_url(submitted: "1")
     end
 
     assert_equal 5, ActionMailer::Base.deliveries.size

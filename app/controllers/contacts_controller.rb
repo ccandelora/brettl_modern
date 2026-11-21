@@ -6,6 +6,7 @@ class ContactsController < ApplicationController
 
   def new
     @contact = ContactForm.new
+    @submitted = params[:submitted] == "1"
   end
 
   def create
@@ -24,7 +25,7 @@ class ContactsController < ApplicationController
     else
       ContactMailer.inquiry(@contact).deliver_now
       MailchimpSubscription.new(@contact).subscribe if @contact.newsletter?
-      redirect_to contact_path, notice: "Thanks — we’ll be in touch soon."
+      redirect_to contact_path(submitted: "1")
     end
   end
 
